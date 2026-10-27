@@ -177,8 +177,6 @@ const firstRound=generateRoundRobin(players);
 const secondRound=firstRound.map(round=>round.map(([home,away])=>[away,home]));
 
 function validateSchedule(round1, round2, players) {
-
-function validateSchedule(round1, round2, players) {
   const errors = [];
   const expected = players.length * (players.length - 1) / 2;
 
