@@ -288,9 +288,8 @@ validationBox.style.cssText =
 validationBox.textContent =
   "VALIDASI JADWAL LALAKU LEAGUE\n\n" +
   "Total pertandingan: " + scheduleCheck.total + "\n" +
-  "Putaran pertama: " + firstRound.length + "\n" +
-  "Putaran kedua: " + secondRound.length + "\n" +
-  "Status: " +
+  "Putaran pertama: " + scheduleCheck.round1Total + "\n" +
+  "Putaran kedua: " + scheduleCheck.round2Total + "\n" +
   (scheduleCheck.errors.length === 0 ? "LULUS" : "PERLU DIPERBAIKI") +
   "\n\n" +
   (scheduleCheck.errors.length === 0
