@@ -175,6 +175,79 @@ const players=["Bang YAR","Ketua Sekte Gn. Santi","D. A. Mrp","Yudha","Tito","Wa
 function generateRoundRobin(names){const ring=[...names];const rounds=[];for(let r=0;r<ring.length-1;r++){const games=[];for(let i=0;i<ring.length/2;i++){let a=ring[i],b=ring[ring.length-1-i];if((r+i)%2===1)[a,b]=[b,a];games.push([a,b]);}rounds.push(games);const fixed=ring[0];const rest=ring.slice(1);rest.unshift(rest.pop());ring.splice(0,ring.length,fixed,...rest);}return rounds;}
 const firstRound=generateRoundRobin(players);
 const secondRound=firstRound.map(round=>round.map(([home,away])=>[away,home]));
+
+function validateSchedule(round1, round2, players) {
+  const errors = [];
+  const expected = players.length * (players.length - 1) / 2;
+  const allGames = [...round1, ...round2];
+
+  if (round1.length !== expected) {
+    errors.push("Putaran 1 bukan " + expected + " pertandingan");
+  }
+
+  if (round2.length !== expected) {
+    errors.push("Putaran 2 bukan " + expected + " pertandingan");
+  }
+
+  function checkRound(games, label) {
+    const pairs = new Set();
+    const counts = new Map();
+
+    games.forEach(([home, away]) => {
+      if (home === away) {
+        errors.push(label + ": pemain melawan dirinya sendiri");
+      }
+
+      const pair = [home, away].sort().join("|");
+      if (pairs.has(pair)) {
+        errors.push(label + ": pasangan berulang " + pair);
+      }
+      pairs.add(pair);
+
+      counts.set(home, (counts.get(home) || 0) + 1);
+      counts.set(away, (counts.get(away) || 0) + 1);
+    });
+
+    players.forEach(name => {
+      if (counts.get(name) !== players.length - 1) {
+        errors.push(label + ": jumlah lawan salah untuk " + name);
+      }
+    });
+  }
+
+  checkRound(round1, "Putaran 1");
+  checkRound(round2, "Putaran 2");
+
+  const firstPairs = new Map();
+  round1.forEach(([home, away]) => {
+    firstPairs.set([home, away].sort().join("|"), [home, away]);
+  });
+
+  round2.forEach(([home, away]) => {
+    const pair = [home, away].sort().join("|");
+    const original = firstPairs.get(pair);
+
+    if (!original) {
+      errors.push("Pasangan putaran 2 tidak ditemukan di putaran 1");
+    } else if (original[0] !== away || original[1] !== home) {
+      errors.push("Kandang-tandang tidak terbalik: " + pair);
+    }
+  });
+
+  return {
+    total: allGames.length,
+    errors
+  };
+}
+
+const scheduleCheck = validateSchedule(
+  firstRound,
+  secondRound,
+  players
+);
+
+console.log("Hasil validasi jadwal:", scheduleCheck);
+  
 let selectedRound=1,selectedMatchday=1;
 const home=document.getElementById("home"),detail=document.getElementById("detail");
 function setActiveCard(page){document.querySelectorAll(".menu-card").forEach(card=>{const active=card.dataset.page===page;card.classList.toggle("active",active);if(active)card.setAttribute("aria-current","page");else card.removeAttribute("aria-current");});}
