@@ -177,35 +177,63 @@ const firstRound=generateRoundRobin(players);
 const secondRound=firstRound.map(round=>round.map(([home,away])=>[away,home]));
 
 function validateSchedule(round1, round2, players) {
+
+function validateSchedule(round1, round2, players) {
   const errors = [];
   const expected = players.length * (players.length - 1) / 2;
-  const allGames = [...round1, ...round2];
 
-  if (round1.length !== expected) {
+  const games1 = round1.flat();
+  const games2 = round2.flat();
+  const allGames = [...games1, ...games2];
+
+  if (games1.length !== expected) {
     errors.push("Putaran 1 bukan " + expected + " pertandingan");
   }
 
-  if (round2.length !== expected) {
+  if (games2.length !== expected) {
     errors.push("Putaran 2 bukan " + expected + " pertandingan");
   }
 
-  function checkRound(games, label) {
+  function checkRound(matchdays, label) {
     const pairs = new Set();
     const counts = new Map();
 
-    games.forEach(([home, away]) => {
-      if (home === away) {
-        errors.push(label + ": pemain melawan dirinya sendiri");
+    matchdays.forEach((games, week) => {
+      if (games.length !== players.length / 2) {
+        errors.push(label + " pekan " + (week + 1) +
+          " bukan " + (players.length / 2) + " pertandingan");
       }
 
-      const pair = [home, away].sort().join("|");
-      if (pairs.has(pair)) {
-        errors.push(label + ": pasangan berulang " + pair);
-      }
-      pairs.add(pair);
+      const weeklyPlayers = new Set();
 
-      counts.set(home, (counts.get(home) || 0) + 1);
-      counts.set(away, (counts.get(away) || 0) + 1);
+      games.forEach(([home, away]) => {
+        if (home === away) {
+          errors.push(label + ": pemain melawan dirinya sendiri");
+        }
+
+        if (weeklyPlayers.has(home) || weeklyPlayers.has(away)) {
+          errors.push(label + " pekan " + (week + 1) +
+            ": ada pemain bermain dua kali");
+        }
+
+        weeklyPlayers.add(home);
+        weeklyPlayers.add(away);
+
+        const pair = [home, away].sort().join("|");
+
+        if (pairs.has(pair)) {
+          errors.push(label + ": pasangan berulang " + pair);
+        }
+
+        pairs.add(pair);
+        counts.set(home, (counts.get(home) || 0) + 1);
+        counts.set(away, (counts.get(away) || 0) + 1);
+      });
+
+      if (weeklyPlayers.size !== players.length) {
+        errors.push(label + " pekan " + (week + 1) +
+          ": tidak semua pemain bertanding");
+      }
     });
 
     players.forEach(name => {
@@ -219,11 +247,12 @@ function validateSchedule(round1, round2, players) {
   checkRound(round2, "Putaran 2");
 
   const firstPairs = new Map();
-  round1.forEach(([home, away]) => {
+
+  games1.forEach(([home, away]) => {
     firstPairs.set([home, away].sort().join("|"), [home, away]);
   });
 
-  round2.forEach(([home, away]) => {
+  games2.forEach(([home, away]) => {
     const pair = [home, away].sort().join("|");
     const original = firstPairs.get(pair);
 
@@ -236,9 +265,12 @@ function validateSchedule(round1, round2, players) {
 
   return {
     total: allGames.length,
+    round1Total: games1.length,
+    round2Total: games2.length,
     errors
   };
 }
+
 
 const scheduleCheck = validateSchedule(
   firstRound,
