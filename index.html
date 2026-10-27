@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07101e">
+<title>e_Football Lalaku League — Season 2</title>
+<style>
+:root{--bg:#050a12;--panel:#0d1b2e;--gold:#f1c85b;--gold2:#ffe9a0;--line:#344b68;--muted:#b6c2d3;--white:#f7f8fb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--white);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#050a12}button{font:inherit;cursor:pointer}
+.site-bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% -15%,#17426b 0,transparent 45%),linear-gradient(180deg,#07101e,#03070d 75%)}
+.site-bg:after{content:"";position:absolute;inset:0;opacity:.3;background:repeating-linear-gradient(120deg,transparent 0 95px,#173858 96px,transparent 98px 180px);mask-image:linear-gradient(#000,transparent 80%)}
+.wrap{width:min(1180px,100%);margin:auto;padding:14px 18px 44px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.icon-button{width:46px;height:46px;border:1px solid #415875;border-radius:14px;color:white;background:#0a1728eF;display:grid;place-items:center;position:relative;box-shadow:0 5px 16px #0005;transition:background .2s,border-color .2s,transform .2s}
+.icon-button:hover{background:#162944;border-color:var(--gold)}.icon-button:active{transform:scale(.96)}.icon-button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bell-dot{position:absolute;right:8px;top:7px;width:8px;height:8px;background:#ff4e55;border:1px solid #081321;border-radius:50%;box-shadow:0 0 7px #ff4e5577}
+.header{text-align:center;padding:0 0 16px}.kicker{margin:0 0 8px;color:#d1dced;letter-spacing:.08em;font-size:clamp(.8rem,2.2vw,1.05rem)}.brand{display:flex;justify-content:center;align-items:center;gap:clamp(12px,3vw,28px)}
+.logo-placeholder{width:clamp(74px,18vw,155px);aspect-ratio:1/1.05;border:2px solid var(--gold);border-radius:24% 24% 30% 30%;display:grid;place-items:center;background:linear-gradient(145deg,#17385c,#071222 65%);box-shadow:0 0 25px #e6b94936;color:var(--gold2);font-size:clamp(28px,7vw,58px);font-weight:950;flex-shrink:0}
+.brand-title{text-align:left;font-weight:1000;font-size:clamp(35px,8.4vw,82px);line-height:.84;letter-spacing:-.04em;color:#ffd85c;text-shadow:0 2px #9b5c12,0 5px 0 #4b2d0d,0 12px 24px #000}.brand-title span{display:block;margin-top:10px;font-size:.66em;letter-spacing:.035em;color:#e9eef7;text-shadow:0 3px 0 #697586,0 8px 20px #000}
+.tagline{margin:16px 0 18px;color:var(--gold2);font-size:clamp(.65rem,2vw,.95rem);font-weight:800;letter-spacing:.12em}.gold-line{height:2px;background:linear-gradient(90deg,transparent,#b98b2f,#fff1b0,#d5a844,transparent);box-shadow:0 0 18px #edc65b4a}
+.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0}.menu-card{position:relative;isolation:isolate;overflow:hidden;min-height:205px;border:1px solid #e1b74f;border-radius:19px;padding:0;text-align:left;color:white;background:#0a1728;box-shadow:0 8px 22px #0007;transition:transform .18s,border-color .18s;width:100%}.menu-card:hover{transform:translateY(-2px);border-color:#fff0a3}.menu-card.active{border:2px solid var(--gold2)}.menu-card:focus-visible,.icon-button:focus-visible{outline:3px solid white;outline-offset:3px}
+.menu-art{position:absolute;inset:0;z-index:-2;background-position:center;background-size:cover}.menu-art.dashboard{background-image:linear-gradient(0deg,#030812f5 0%,#03081220 80%),radial-gradient(circle at 50% 65%,#e4b64b,#0c2948 45%,#050a12)}.menu-art.standings{background-image:linear-gradient(0deg,#030812f2,#07142622),radial-gradient(circle at 50% 30%,#d9a843,#172c4c 38%,#061020)}.menu-art.players{background-image:linear-gradient(0deg,#030812f5,#07142633),radial-gradient(ellipse at 50% 30%,#3678a8,#0b1c32 55%,#03070d)}.menu-art.matches{background-image:linear-gradient(0deg,#030812f5,#07142622),radial-gradient(circle at 60% 55%,#c18a28,#1a3554 38%,#050a12)}.menu-art:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(125deg,transparent 0 50px,#ffffff0a 51px,transparent 53px 105px)}
+.card-content{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:center;gap:12px}.menu-icon{width:64px;height:64px;display:grid;place-items:center;flex-shrink:0;border:1px solid var(--gold);border-radius:16px;background:#09182bdc;color:var(--gold2);box-shadow:0 0 16px #e5bd5538}.menu-icon svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.card-copy{min-width:0;flex:1}.card-copy strong{display:block;font-size:clamp(1.1rem,2.8vw,1.55rem);line-height:1.1}.card-copy small{display:block;color:#e0e6ef;font-size:.88rem;margin-top:4px}.arrow{width:40px;height:40px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold2);font-size:23px;flex-shrink:0}
+.promo{position:relative;overflow:hidden;display:flex;align-items:center;min-height:175px;border:1px solid #344b68;border-radius:20px;padding:24px 28px;margin-top:18px;background:linear-gradient(90deg,#071222f5 0%,#0b1b2cdd 55%,#0b1b2c44),radial-gradient(ellipse at 82% 50%,#b78a32,#153553 40%,#06101e)}.promo:before{content:"";position:absolute;left:26px;top:25px;bottom:25px;width:4px;border-radius:8px;background:var(--gold);box-shadow:0 0 16px #ffda6c}.promo-copy{padding-left:24px;position:relative}.promo-copy small{color:var(--gold2);letter-spacing:.2em;font-weight:800}.promo-copy h2{margin:3px 0;font-size:clamp(1.7rem,5vw,3rem);line-height:1;color:#ffe59a}.promo-copy p{margin:4px 0 0;color:#f1d78b;letter-spacing:.12em;font-size:.82rem;font-weight:700}
+.page-panel{margin-top:22px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#0c1a2c,#07111e);padding:clamp(18px,3vw,28px)}.page-panel h2{margin:0 0 8px;font-size:clamp(1.4rem,4vw,2rem)}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}.stat{border:1px solid #2d425c;border-radius:14px;background:#122238;padding:16px}.stat span{display:block;color:var(--muted);font-size:.82rem}.stat b{display:block;color:var(--gold2);font-size:1.8rem}.list{margin-top:14px}.row-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid #293b52}.row-item:last-child{border-bottom:0}.row-item b{font-weight:750}.badge{font-size:.75rem;color:#c8d3e2;border:1px solid #536783;border-radius:999px;padding:4px 9px;white-space:nowrap}.btn{border:1px solid var(--gold);border-radius:10px;padding:10px 14px;background:var(--gold);color:#111827;font-weight:800}.btn.secondary{background:#101f33;color:white;border-color:#526985}
+.round-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:18px 0 14px}.round-tab{border:1px solid #526985;border-radius:12px;background:#0b1829;color:#d5dfed;padding:12px 8px;font-weight:850;line-height:1.25}.round-tab small{display:block;font-size:.72rem;font-weight:500;margin-top:5px;color:#aebed1}.round-tab.active{background:linear-gradient(135deg,#f1c85b,#c18d2e);border-color:#fff0ad;color:#111827;box-shadow:0 0 16px #e3b84b30}.round-tab.active small{color:#35270b}.matchday-tabs{display:flex;gap:7px;overflow-x:auto;padding:3px 1px 10px;margin:8px 0;scrollbar-width:thin}.matchday-tab{flex:0 0 auto;border:1px solid #344b68;border-radius:9px;background:#0b1829;color:#c7d3e3;padding:8px 11px;font-size:.82rem;font-weight:750}.matchday-tab.active{border-color:#f1c85b;color:#ffe49a;background:#17263a}.fixture-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;padding:13px 10px;border-bottom:1px solid #293b52}.fixture-row:last-child{border-bottom:0}.fixture-team{font-weight:750;overflow-wrap:anywhere}.fixture-team:last-child{text-align:right}.fixture-vs{color:var(--gold);font-size:.75rem;font-weight:900}.fixture-status{display:block;text-align:center;margin-top:3px}
+
+.player-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.player-card{position:relative;overflow:hidden;min-width:0;padding:0;border:1px solid #b98b3a;border-radius:15px;background:linear-gradient(145deg,#0d1d31,#030812);color:#fff;text-align:left;box-shadow:0 8px 20px #0006;transition:border-color .2s,transform .2s}.player-card:hover{border-color:#fff0a3;transform:translateY(-2px)}.player-card:focus-visible{outline:2px solid #fff0a3;outline-offset:3px}.player-card-art{position:relative;display:grid;place-items:center;aspect-ratio:3/3.8;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,#214b70 0%,#0b1b30 48%,#030811 100%);border-bottom:1px solid #b98b3a}.player-card-art:before{content:"";position:absolute;inset:6px;border:1px solid #d6ad55;border-radius:9px;clip-path:polygon(0 0,35% 0,35% 1%,65% 1%,65% 0,100% 0,100% 100%,0 100%);opacity:.9}.player-card-art:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(125deg,transparent 0 35px,#ffffff0a 36px,transparent 38px 72px)}.player-shield{position:absolute;top:12px;left:12px;z-index:1;border:1px solid #e2bd5b;border-radius:7px;padding:3px 6px;color:#ffe49a;font-size:.55rem;font-weight:900;letter-spacing:.08em;background:#07101dcc}.player-silhouette{position:relative;z-index:1;width:54%;aspect-ratio:.78;border-radius:46% 46% 18% 18%;background:linear-gradient(180deg,#192f48,#050a12 80%);filter:drop-shadow(0 0 16px #dcae4540)}.player-silhouette:before{content:"";position:absolute;top:-25%;left:24%;width:52%;aspect-ratio:1;border-radius:50%;background:linear-gradient(140deg,#253b53,#050a12)}.player-card-name{padding:10px 9px 11px;background:linear-gradient(90deg,#0a1524,#14263c,#0a1524);text-align:center}.player-card-name strong{display:block;color:#ffe49a;font-size:clamp(.72rem,2.8vw,1rem);line-height:1.2;text-transform:uppercase;overflow-wrap:anywhere}.player-card-name small{display:block;margin-top:4px;color:#aebed1;font-size:.62rem;letter-spacing:.08em}.player-card-hint{margin:14px 0 0;color:#aebed1;font-size:.8rem}@media(min-width:700px){.player-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.player-card-name{padding:13px}}@media(min-width:1000px){.player-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+.hidden{display:none!important}footer{text-align:center;color:#71839b;font-size:.76rem;margin:26px 0 0}
+@media(min-width:800px){.menu-card{min-height:270px}.menu-grid{gap:18px}.card-content{left:22px;right:22px;bottom:22px}.menu-icon{width:72px;height:72px}.menu-icon svg{width:34px;height:34px}}
+@media(max-width:560px){.wrap{padding:10px 12px 32px}.header{padding-top:2px}.brand{gap:10px}.logo-placeholder{width:76px;border-radius:18px}.brand-title{font-size:clamp(30px,8vw,43px)}.brand-title span{margin-top:8px}.tagline{letter-spacing:.055em;font-size:.63rem}.menu-grid{gap:9px;margin:18px 0}.menu-card{min-height:174px;border-radius:15px}.card-content{left:10px;right:10px;bottom:11px;gap:8px;flex-wrap:wrap}.menu-icon{width:44px;height:44px;border-radius:11px}.menu-icon svg{width:23px;height:23px}.card-copy{flex-basis:calc(100% - 65px)}.card-copy strong{font-size:1rem}.card-copy small{font-size:.72rem;line-height:1.25}.arrow{display:none}.promo{min-height:150px;padding:18px 14px}.promo:before{left:14px}.promo-copy{padding-left:16px}.promo-copy small{font-size:.62rem}.promo-copy p{font-size:.66rem;letter-spacing:.07em}.stats{grid-template-columns:1fr}}
+@media(max-width:360px){.logo-placeholder{width:62px}.brand-title{font-size:28px}.menu-card{min-height:160px}.card-content{left:8px;right:8px}.card-copy strong{font-size:.9rem}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+/* V10: perapian jadwal dan tabel klasemen */
+.fixture-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(142px,0.8fr) minmax(0,1fr)!important;align-items:center!important;gap:10px!important}
+.fixture-team{min-width:0!important;text-align:center!important;overflow-wrap:anywhere!important}
+.fixture-row>div:nth-child(2){display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-width:0!important}
+.fixture-vs{text-align:center!important;margin:0!important;line-height:1.2!important}
+.fixture-status{display:inline-flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;white-space:normal!important;max-width:100%!important;line-height:1.25!important;padding:7px 10px!important}
+.standings-wrap{overflow-x:auto;border:1px solid #33455f;border-radius:14px;margin-top:14px}
+.standings-table{width:100%;min-width:680px;border-collapse:collapse;font-size:13px}
+.standings-table th{background:#d8b45c;color:#081426;font-size:11px;letter-spacing:.04em;padding:12px 9px;text-align:center;white-space:nowrap}
+.standings-table td{padding:11px 9px;text-align:center;border-bottom:1px solid #263951;color:#e0e7f1;white-space:nowrap}
+.standings-table tbody tr:nth-child(even){background:#101f33}
+.standings-table tbody tr:nth-child(odd){background:#0b1728}
+.standings-table td:nth-child(2){text-align:left;font-weight:700;min-width:135px}
+.standings-table td:first-child{color:#e6c66e;font-weight:800}
+.standings-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0}
+.standings-note{font-size:12px;color:#91a2b9;margin-top:10px;line-height:1.5}
+.btn.pdf-btn{background:linear-gradient(135deg,#e7c76e,#bd9140);color:#101827;border:1px solid #f4d98b;font-weight:800}
+@media(max-width:520px){.fixture-row{grid-template-columns:minmax(0,1fr) minmax(120px,.9fr) minmax(0,1fr)!important;gap:5px!important}.fixture-team{font-size:14px!important}.fixture-status{font-size:11px!important;padding:6px 7px!important}}
+@media print{body{background:#fff!important;color:#111!important}.site-header,header,footer,.menu-grid,.standings-actions,.btn,.promo{display:none!important}#home{display:none!important}.page-panel{display:block!important;background:#fff!important;color:#111!important;border:0!important;box-shadow:none!important;padding:0!important}.standings-table{min-width:0!important;font-size:10px!important}.standings-table th{background:#d8b45c!important;color:#081426!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.standings-table td{color:#111!important;background:#fff!important;border-color:#ddd!important}.standings-table tbody tr:nth-child(even){background:#f3f5f8!important}.standings-note,.muted{color:#444!important}}
+
+</style>
+</head>
+<body>
+<div class="site-bg"></div>
+<div class="wrap">
+  <div class="topbar">
+    <button class="icon-button" id="notificationButton" aria-label="Notifikasi" title="Notifikasi">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bell-dot"></span>
+    </button>
+  </div>
+  <header class="header">
+    <p class="kicker">e_Football League</p>
+    <div class="brand"><div class="logo-placeholder" aria-label="Tempat logo Lalaku">L</div><div class="brand-title">LALAKU<span>SEASON 2</span></div></div>
+    <p class="tagline">COMPETE • CONQUER • BECOME LEGEND</p><div class="gold-line"></div>
+  </header>
+  <main id="page-content">
+    <section id="home"><div class="menu-grid">
+      <button class="menu-card active" data-page="dashboard" aria-current="page"><span class="menu-art dashboard"></span><span class="card-content"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></span><span class="card-copy"><strong>Dashboard</strong><small>Ringkasan dan informasi liga</small></span><span class="arrow">›</span></span></button>
+      <button class="menu-card" data-page="standings"><span class="menu-art standings"></span><span class="card-content"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H3v2a5 5 0 0 0 5 5M17 6h4v2a5 5 0 0 1-5 5"/></svg></span><span class="card-copy"><strong>Klasemen</strong><small>Peringkat dan statistik liga</small></span><span class="arrow">›</span></span></button>
+      <button class="menu-card" data-page="players"><span class="menu-art players"></span><span class="card-content"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="card-copy"><strong>Pemain</strong><small>Profil, foto, dan performa</small></span><span class="arrow">›</span></span></button>
+      <button class="menu-card" data-page="matches"><span class="menu-art matches"></span><span class="card-content"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h2M14 14h2M8 17h2M14 17h2"/></svg></span><span class="card-copy"><strong>Pertandingan</strong><small>Jadwal, skor, dan hasil</small></span><span class="arrow">›</span></span></button>
+    </div><section class="promo"><div class="promo-copy"><small>IKUTI PERJALANAN</small><h2>12 PEMAIN</h2><p>DALAM PEREBUTAN GELAR</p><p>LALAKU LEAGUE SEASON 2</p><button class="btn secondary" style="margin-top:14px" data-page="info">Kenali Liga Ini</button></div></section></section>
+    <section id="detail" class="page-panel hidden"></section>
+  </main>
+  
+<section id="firebase-test-panel" style="max-width:980px;margin:28px auto;padding:20px;border:1px solid #b78b36;border-radius:16px;background:linear-gradient(135deg,#081426,#03070d);color:#eef3fa;font-family:inherit">
+  <h2 style="margin-top:0;color:#e6bd61">Uji Koneksi Firebase · TESTING</h2>
+  <p style="color:#aebbd0">Panel ini hanya untuk pengujian. Tombol uji hanya membaca data; tidak menulis atau mengubah database.</p>
+  <label for="fb-email" style="display:block;margin:12px 0 6px">Email akun Firebase Testing</label>
+  <input id="fb-email" type="email" autocomplete="username" placeholder="Email yang didaftarkan di Firebase Authentication" style="box-sizing:border-box;width:100%;padding:12px;border-radius:8px;border:1px solid #53647c;background:#07101e;color:#fff">
+  <label for="fb-password" style="display:block;margin:12px 0 6px">Kata sandi akun Firebase Testing</label>
+  <input id="fb-password" type="password" autocomplete="current-password" placeholder="Kata sandi akun testing" style="box-sizing:border-box;width:100%;padding:12px;border-radius:8px;border:1px solid #53647c;background:#07101e;color:#fff">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+    <button id="fb-login" type="button" style="padding:11px 16px;border:0;border-radius:8px;background:#d6ad4e;color:#111;font-weight:700">Masuk akun testing</button>
+    <button id="fb-read" type="button" disabled style="padding:11px 16px;border:1px solid #d6ad4e;border-radius:8px;background:transparent;color:#f4d782">Uji baca database</button>
+    <button id="fb-logout" type="button" style="padding:11px 16px;border:1px solid #53647c;border-radius:8px;background:transparent;color:#fff">Keluar</button>
+  </div>
+  <p id="fb-status" role="status" aria-live="polite" style="margin-bottom:0;margin-top:14px;color:#d7e0ed">Status: belum masuk. Database belum diuji.</p>
+</section>
+
+<footer>e_Football Lalaku League Season 2 · Starter UI · Firebase Testing (uji baca saja)</footer>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDRPfe9mhnfW4KaOrbyTpDBYks3L7Mxl_0",
+  authDomain: "lalaku-league-testing.firebaseapp.com",
+  databaseURL: "https://lalaku-league-testing-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "lalaku-league-testing",
+  storageBucket: "lalaku-league-testing.firebasestorage.app",
+  messagingSenderId: "564911465871",
+  appId: "1:564911465871:web:aa35ad269d787e0e27d7fa",
+  measurementId: "G-MDVXD56JWZ"
+};
+firebase.initializeApp(firebaseConfig);
+const testAuth = firebase.auth();
+const testDb = firebase.database();
+const fbStatus = document.getElementById("fb-status");
+const fbRead = document.getElementById("fb-read");
+testAuth.onAuthStateChanged(user => {
+  fbRead.disabled = !user;
+  if (user) fbStatus.textContent = "Status: masuk sebagai " + user.email + ". Siap melakukan uji baca saja.";
+  else fbStatus.textContent = "Status: belum masuk. Database belum diuji.";
+});
+document.getElementById("fb-login").addEventListener("click", async () => {
+  const email = document.getElementById("fb-email").value.trim();
+  const password = document.getElementById("fb-password").value;
+  if (!email || !password) { fbStatus.textContent = "Masukkan email dan kata sandi akun Firebase Testing."; return; }
+  fbStatus.textContent = "Sedang masuk...";
+  try { await testAuth.signInWithEmailAndPassword(email, password); }
+  catch (e) { fbStatus.textContent = "Gagal masuk: " + (e.code || e.message) + ". Periksa email/kata sandi dan Authorized domains."; }
+});
+fbRead.addEventListener("click", async () => {
+  if (!testAuth.currentUser) { fbStatus.textContent = "Masuk terlebih dahulu."; return; }
+  fbStatus.textContent = "Sedang menguji akses baca...";
+  try {
+    const snap = await testDb.ref("/").once("value");
+    const value = snap.val();
+    fbStatus.textContent = value === null ? "Berhasil terhubung dan membaca database Testing. Database masih kosong (null). Tidak ada data yang ditulis." : "Berhasil terhubung dan membaca database Testing. Data ditemukan di root; hanya dibaca, tidak diubah.";
+  } catch (e) { fbStatus.textContent = "Uji baca gagal: " + (e.code || e.message) + ". Periksa Rules dan status login."; }
+});
+document.getElementById("fb-logout").addEventListener("click", async () => { try { await testAuth.signOut(); fbStatus.textContent = "Sudah keluar. Tidak ada data yang diubah."; } catch(e) { fbStatus.textContent = "Gagal keluar: " + e.message; } });
+</script>
+<script>
+const players=["Bang YAR","Ketua Sekte Gn. Santi","D. A. Mrp","Yudha","Tito","Waone","Radiansyah","Zebua","Manik","Okri","Nino","Fiqri"];
+// Jadwal round-robin dibangkitkan otomatis dari daftar 12 peserta.
+function generateRoundRobin(names){const ring=[...names];const rounds=[];for(let r=0;r<ring.length-1;r++){const games=[];for(let i=0;i<ring.length/2;i++){let a=ring[i],b=ring[ring.length-1-i];if((r+i)%2===1)[a,b]=[b,a];games.push([a,b]);}rounds.push(games);const fixed=ring[0];const rest=ring.slice(1);rest.unshift(rest.pop());ring.splice(0,ring.length,fixed,...rest);}return rounds;}
+const firstRound=generateRoundRobin(players);
+const secondRound=firstRound.map(round=>round.map(([home,away])=>[away,home]));
+let selectedRound=1,selectedMatchday=1;
+const home=document.getElementById("home"),detail=document.getElementById("detail");
+function setActiveCard(page){document.querySelectorAll(".menu-card").forEach(card=>{const active=card.dataset.page===page;card.classList.toggle("active",active);if(active)card.setAttribute("aria-current","page");else card.removeAttribute("aria-current");});}
+function showDashboard(){setActiveCard("dashboard");home.classList.remove("hidden");detail.classList.add("hidden");window.scrollTo({top:0,behavior:"smooth"});}
+function openPage(page){setActiveCard(page);if(page==="dashboard"){showDashboard();return;}home.classList.add("hidden");detail.classList.remove("hidden");const titles={standings:"Klasemen Sementara",players:"Daftar Pemain",matches:"Jadwal Pertandingan",results:"Hasil Pertandingan",info:"Informasi Liga"};let body="";
+if(page==="standings")body=renderStandings();
+else if(page==="players")body=`<p class="muted">Pilih kartu pemain untuk membuka profil. Area foto sudah disiapkan sebagai placeholder dan bisa diganti dengan foto asli 12 peserta.</p><div class="player-grid">${players.map((p,i)=>`<button class="player-card" data-player="${p}" aria-label="Buka profil ${p}"><span class="player-card-art"><span class="player-shield">LALAKU · S2</span><span class="player-silhouette" aria-hidden="true"></span></span><span class="player-card-name"><strong>${p}</strong><small>e_FOOTBALL · SEASON 2</small></span></button>`).join("")}</div><p class="player-card-hint">Ketuk salah satu kartu untuk melihat profil pemain.</p>`;
+else if(page==="matches")body=renderSchedule();
+else if(page==="results")body=`<p class="muted">Belum ada hasil resmi yang ditampilkan karena website belum terhubung ke data pertandingan.</p><div class="row-item"><b>Hasil pertandingan terbaru</b><span class="badge">Menunggu data</span></div><p>Setelah admin menyimpan skor valid, hasil akan tampil di sini dan memperbarui klasemen serta riwayat pemain.</p>`;
+else body=`<h3>Identitas Liga</h3><p class="muted">e_Football Lalaku League Season 2 — COMPETE • CONQUER • BECOME LEGEND.</p><div class="stats"><div class="stat"><span>Peserta</span><b>12</b></div><div class="stat"><span>Matchday</span><b>22</b></div><div class="stat"><span>Total laga</span><b>132</b></div></div><h3>Format Kompetisi</h3><p>Setiap pemain bertemu 11 lawan sebanyak dua kali. Putaran pertama dan kedua masing-masing terdiri dari 11 matchday, dengan enam pertandingan per matchday. Posisi kandang dan tandang dibalik pada pertemuan kedua.</p><h3>Aturan data</h3><p class="muted">Klasemen dan statistik akan dihitung dari hasil pertandingan yang disimpan secara sah. Prototipe ini belum terhubung ke Firebase.</p>`;
+detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>${titles[page]}</h2>${body}`;window.scrollTo({top:0,behavior:"smooth"});}
+function renderStandings(){
+const rows=players.map((p,i)=>`<tr><td>${i+1}</td><td>${p}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>`).join("");
+return `<p class="muted">Klasemen sementara · Statistik akan dihitung dari hasil pertandingan resmi setelah integrasi database.</p>
+<div class="standings-actions"><span class="badge">12 pemain · Belum ada skor resmi</span><button class="btn pdf-btn" type="button" id="print-standings">▣ Cetak / Simpan PDF</button></div>
+<div class="standings-wrap"><table class="standings-table"><thead><tr><th>POS</th><th>PEMAIN</th><th>MAIN</th><th>MENANG</th><th>SERI</th><th>KALAH</th><th>GM</th><th>GK</th><th>SG</th><th>POIN</th></tr></thead><tbody>${rows}</tbody></table></div>
+<p class="standings-note">GM = gol memasukkan · GK = gol kemasukan · SG = selisih gol. Saat ini semua angka masih 0 karena belum ada hasil pertandingan yang terhubung. Urutan pemain belum menunjukkan peringkat berdasarkan performa.</p>`;
+}
+function renderSchedule(){const games=(selectedRound===1?firstRound:secondRound)[selectedMatchday-1];return `<p class="muted">12 pemain · 11 matchday per putaran · 6 pertandingan per matchday. Jadwal ini dibuat otomatis sebagai contoh awal dan belum tersimpan ke Firebase.</p><div class="round-tabs" role="tablist" aria-label="Pilih putaran"><button class="round-tab ${selectedRound===1?'active':''}" data-round="1" role="tab" aria-selected="${selectedRound===1}">PUTARAN PERTAMA<small>Leg 1 · 66 pertandingan</small></button><button class="round-tab ${selectedRound===2?'active':''}" data-round="2" role="tab" aria-selected="${selectedRound===2}">PUTARAN KEDUA<small>Leg 2 · 66 pertandingan</small></button></div><h3>${selectedRound===1?'Putaran Pertama':'Putaran Kedua'} · Matchday ${selectedMatchday}</h3><div class="matchday-tabs" aria-label="Pilih matchday">${Array.from({length:11},(_,i)=>`<button class="matchday-tab ${selectedMatchday===i+1?'active':''}" data-matchday="${i+1}">Pekan ${i+1}</button>`).join('')}</div><div class="list">${games.map(([a,b],i)=>`<div class="fixture-row"><div class="fixture-team">${a}</div><div><div class="fixture-vs">VS</div><span class="badge fixture-status">Belum dimainkan</span></div><div class="fixture-team">${b}</div></div>`).join('')}</div><p class="muted">Putaran kedua mengulang pasangan yang sama dengan posisi kandang dan tandang dibalik.</p>`;}
+function refreshSchedule(){const h=detail.querySelector('h2');detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>Jadwal Pertandingan</h2>${renderSchedule()}`;}
+function openPlayer(name){setActiveCard("players");detail.innerHTML=`<button class="btn secondary" data-page="players">← Kembali ke Pemain</button><h2>${name}</h2><p class="muted">Profil masih placeholder. Foto, poin, W/D/L, gol, form lima laga, dan riwayat akan ditampilkan dari data resmi setelah integrasi Firebase.</p><div class="stats"><div class="stat"><span>Poin</span><b>—</b></div><div class="stat"><span>Menang / Seri / Kalah</span><b>— / — / —</b></div><div class="stat"><span>Selisih Gol</span><b>—</b></div></div>`;window.scrollTo({top:0,behavior:"smooth"});}
+document.addEventListener("click",e=>{if(e.target.closest("#print-standings")){window.print();return;}const roundButton=e.target.closest("[data-round]");if(roundButton){selectedRound=Number(roundButton.dataset.round);refreshSchedule();return;}const matchdayButton=e.target.closest("[data-matchday]");if(matchdayButton){selectedMatchday=Number(matchdayButton.dataset.matchday);refreshSchedule();return;}const pageButton=e.target.closest("[data-page]");if(pageButton){openPage(pageButton.dataset.page);return}const playerButton=e.target.closest("[data-player]");if(playerButton){openPlayer(playerButton.dataset.player);return}});
+document.getElementById("notificationButton").addEventListener("click",()=>alert("Notifikasi belum aktif. Setelah website terhubung dengan data liga, tombol ini dapat menampilkan pembaruan jadwal dan hasil pertandingan."));
+</script>
+</body></html>
