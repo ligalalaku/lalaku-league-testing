@@ -178,6 +178,17 @@ const secondRound=firstRound.map(round=>round.map(([home,away])=>[away,home]));
 
 function validateSchedule(round1, round2, players) {
   const errors = [];
+  const normalizedNames = players.map(name =>
+  typeof name === "string" ? name.trim().toLowerCase() : ""
+    );
+
+    if (normalizedNames.some(name => !name)) {
+        errors.push("Daftar pemain mengandung nama kosong.");
+    }
+
+    if (new Set(normalizedNames).size !== normalizedNames.length) {
+        errors.push("Daftar pemain mengandung nama duplikat.");
+    }
   const expected = players.length * (players.length - 1) / 2;
 
   const games1 = round1.flat();
