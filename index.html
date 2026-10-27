@@ -127,13 +127,45 @@ document.getElementById("fb-login").addEventListener("click", async () => {
   catch (e) { fbStatus.textContent = "Gagal masuk: " + (e.code || e.message) + ". Periksa email/kata sandi dan Authorized domains."; }
 });
 fbRead.addEventListener("click", async () => {
-  if (!testAuth.currentUser) { fbStatus.textContent = "Masuk terlebih dahulu."; return; }
-  fbStatus.textContent = "Sedang menguji akses baca...";
+  if (!testAuth.currentUser) {
+    fbStatus.textContent = "Masuk terlebih dahulu.";
+    return;
+  }
+
+  fbStatus.textContent = "Sedang membaca data pemain Testing...";
+
   try {
-    const snap = await testDb.ref("/").once("value");
-    const value = snap.val();
-    fbStatus.textContent = value === null ? "Berhasil terhubung dan membaca database Testing. Database masih kosong (null). Tidak ada data yang ditulis." : "Berhasil terhubung dan membaca database Testing. Data ditemukan di root; hanya dibaca, tidak diubah.";
-  } catch (e) { fbStatus.textContent = "Uji baca gagal: " + (e.code || e.message) + ". Periksa Rules dan status login."; }
+    const snap = await testDb
+      .ref("lalakuLeagueSeason2/players")
+      .once("value");
+
+    const data = snap.val();
+
+    if (data === null) {
+      fbStatus.textContent =
+        "Berhasil terhubung, tetapi data pemain tidak ditemukan pada jalur lalakuLeagueSeason2/players.";
+      return;
+    }
+
+    const entries = Array.isArray(data)
+      ? data
+      : Object.values(data);
+
+    const names = entries
+      .filter(player => player && player.name)
+      .map(player => player.name);
+
+    fbStatus.textContent =
+      "Berhasil membaca Firebase Testing. Jumlah pemain: " +
+      names.length +
+      "\n\n" +
+      names.map((name, index) => (index + 1) + ". " + name).join("\n");
+
+  } catch (e) {
+    fbStatus.textContent =
+      "Gagal membaca data pemain: " +
+      (e.code || e.message || "Kesalahan tidak diketahui");
+  }
 });
 document.getElementById("fb-logout").addEventListener("click", async () => { try { await testAuth.signOut(); fbStatus.textContent = "Sudah keluar. Tidak ada data yang diubah."; } catch(e) { fbStatus.textContent = "Gagal keluar: " + e.message; } });
 </script>
