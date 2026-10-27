@@ -246,7 +246,27 @@ const scheduleCheck = validateSchedule(
   players
 );
 
-console.log("Hasil validasi jadwal:", scheduleCheck);
+
+const validationBox = document.createElement("pre");
+validationBox.style.cssText =
+  "padding:16px;margin:16px;border:1px solid #d4af37;" +
+  "border-radius:12px;background:#0b1728;color:white;" +
+  "white-space:pre-wrap;";
+
+validationBox.textContent =
+  "VALIDASI JADWAL LALAKU LEAGUE\n\n" +
+  "Total pertandingan: " + scheduleCheck.total + "\n" +
+  "Putaran pertama: " + firstRound.length + "\n" +
+  "Putaran kedua: " + secondRound.length + "\n" +
+  "Status: " +
+  (scheduleCheck.errors.length === 0 ? "LULUS" : "PERLU DIPERBAIKI") +
+  "\n\n" +
+  (scheduleCheck.errors.length === 0
+    ? "Tidak ditemukan kesalahan oleh pemeriksaan ini."
+    : scheduleCheck.errors.join("\n"));
+
+document.body.prepend(validationBox);
+
   
 let selectedRound=1,selectedMatchday=1;
 const home=document.getElementById("home"),detail=document.getElementById("detail");
