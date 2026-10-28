@@ -19,7 +19,20 @@
 <header class="header"><div class="kicker">e_Football • TESTING ENVIRONMENT</div><div class="brand">LALAKU <span>SEASON 2</span></div><div class="tag">COMPETE • CONQUER • BECOME LEGEND</div><div class="line"></div></header>
 <section class="panel"><h2>Uji Input Skor Admin</h2><p class="muted">File prototipe terpisah. Menggunakan Firebase Testing, bukan database produksi. Jangan gunakan untuk data resmi sebelum Rules diuji.</p><div class="grid"><label class="field">Email admin<input id="email" type="email" autocomplete="username" placeholder="Email akun Firebase Testing"></label><label class="field">Kata sandi<input id="password" type="password" autocomplete="current-password" placeholder="Kata sandi akun Testing"></label></div><div class="tabs"><button id="login" class="active">Masuk</button><button id="logout" class="secondary">Keluar</button><button id="load">Muat skor tersimpan</button></div><div id="authStatus" class="status">Status: belum masuk. Belum ada data yang dibaca atau ditulis.</div></section>
 <section class="panel"><h2>Jadwal & Skor</h2><p class="muted">12 pemain · 11 matchday per putaran · 6 pertandingan per matchday · 132 laga total.</p><div class="tabs"><button id="leg1" class="active">Putaran 1 · 66 laga</button><button id="leg2">Putaran 2 · 66 laga</button></div><label class="field">Pilih matchday<select id="matchday"></select></label><div id="games"></div><div class="status small">ID tetap: <code>leg1_md01_match01</code> (contoh). Simpan dilakukan per pertandingan agar tidak menimpa catatan laga lain.</div></section>
-<section class="panel"><h2>Klasemen dari skor tersimpan</h2><p class="muted">Hanya pertandingan dengan skor numerik tersimpan yang dihitung.</p><div id="standings" class="tablewrap"></div></section><p class="footer">Lalaku League Season 2 · Prototipe Testing · Tidak mengubah website utama</p></div>
+<section class="panel">
+  <h2>Hasil Pertandingan</h2>
+  <p class="muted">Daftar pertandingan dengan skor yang sudah tersimpan.</p>
+  <div id="results" class="tablewrap"></div>
+</section>
+
+<section class="panel">
+  <h2>Klasemen dari skor tersimpan</h2>
+  <p class="muted">Hanya pertandingan dengan skor numerik tersimpan yang dihitung.</p>
+  <div id="standings" class="tablewrap"></div>
+</section>
+
+<p class="footer">Lalaku League Season 2 · Prototipe Testing · Tidak mengubah website utama</p>
+</div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyDRPfe9mhnfW4KaOrbyTpDBYks3L7Mxl_0",authDomain:"lalaku-league-testing.firebaseapp.com",databaseURL:"https://lalaku-league-testing-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"lalaku-league-testing",storageBucket:"lalaku-league-testing.firebasestorage.app",messagingSenderId:"564911465871",appId:"1:564911465871:web:aa35ad269d787e0e27d7fa",measurementId:"G-MDVXD56JWZ"};
 firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),db=firebase.database();
@@ -32,7 +45,50 @@ function matchId(leg,day,index){return `leg${leg}_md${String(day).padStart(2,'0'
 function currentGames(){return (selectedLeg===1?legOne:legTwo)[selectedDay-1]}
 function renderGames(){const games=currentGames();$('games').innerHTML=games.map(([home,away],i)=>{const id=matchId(selectedLeg,selectedDay,i),s=scores[id],done=s&&Number.isInteger(s.homeScore)&&Number.isInteger(s.awayScore);return `<div class="fixture"><div class="team">${home}</div><div class="versus">VS<div class="scoreline"><input aria-label="Gol ${home}" type="number" min="0" step="1" inputmode="numeric" id="h-${id}" value="${done?s.homeScore:''}" ${auth.currentUser?'':'disabled'}><b>:</b><input aria-label="Gol ${away}" type="number" min="0" step="1" inputmode="numeric" id="a-${id}" value="${done?s.awayScore:''}" ${auth.currentUser?'':'disabled'}></div><div class="small ${done?'completed':'warning'}">${done?'SELESAI':'BELUM DIMAINKAN'}</div>${auth.currentUser?'<button class="btn small save" data-id="'+id+'" data-home="'+home+'" data-away="'+away+'">Simpan skor</button>':''}</div><div class="team">${away}</div></div>`}).join('');}
 function renderStandings(){const rows=Object.fromEntries(players.map(p=>[p,{p,main:0,w:0,d:0,l:0,gm:0,gk:0,pts:0}]));for(const s of Object.values(scores)){if(!s||!Number.isInteger(s.homeScore)||!Number.isInteger(s.awayScore)||!rows[s.home]||!rows[s.away])continue;const h=rows[s.home],a=rows[s.away];h.main++;a.main++;h.gm+=s.homeScore;h.gk+=s.awayScore;a.gm+=s.awayScore;a.gk+=s.homeScore;if(s.homeScore>s.awayScore){h.w++;h.pts+=3;a.l++}else if(s.homeScore<s.awayScore){a.w++;a.pts+=3;h.l++}else{h.d++;a.d++;h.pts++;a.pts++}}const list=Object.values(rows).sort((a,b)=>b.pts-a.pts||(b.gm-b.gk)-(a.gm-a.gk)||b.gm-a.gm||a.p.localeCompare(b.p));$('standings').innerHTML=`<table><thead><tr><th>Pos</th><th>Pemain</th><th>MAIN</th><th>M</th><th>S</th><th>K</th><th>GM</th><th>GK</th><th>SG</th><th>PTS</th></tr></thead><tbody>${list.map((r,i)=>`<tr><td>${i+1}</td><td>${r.p}</td><td>${r.main}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gm}</td><td>${r.gk}</td><td>${r.gm-r.gk}</td><td><b>${r.pts}</b></td></tr>`).join('')}</tbody></table>`}
-function render(){renderGames();renderStandings()}
+function renderResults(){
+  const completed = Object.values(scores)
+    .filter(s =>
+      s &&
+      Number.isInteger(s.homeScore) &&
+      Number.isInteger(s.awayScore) &&
+      players.includes(s.home) &&
+      players.includes(s.away)
+    )
+    .sort((a,b) =>
+      (b.round-a.round) ||
+      (b.matchday-a.matchday)
+    );
+
+  $('results').innerHTML = completed.length
+    ? `<table>
+        <thead>
+          <tr>
+            <th>Putaran</th>
+            <th>Matchday</th>
+            <th>Pertandingan</th>
+            <th>Skor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${completed.map(s => `
+            <tr>
+              <td>${s.round}</td>
+              <td>${s.matchday}</td>
+              <td>${s.home} vs ${s.away}</td>
+              <td><b>${s.homeScore} - ${s.awayScore}</b></td>
+              <td><span class="completed">SELESAI</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`
+    : '<p class="muted">Belum ada pertandingan yang selesai.</p>';
+}
+function render(){
+  renderGames();
+  renderResults();
+  renderStandings();
+}
 $('login').addEventListener('click',async()=>{const email=$('email').value.trim(),password=$('password').value;if(!email||!password){status.textContent='Masukkan email dan kata sandi akun Firebase Testing.';return}status.textContent='Sedang masuk...';try{await auth.signInWithEmailAndPassword(email,password)}catch(e){status.textContent='Login gagal: '+(e.code||e.message)}});
 $('logout').addEventListener('click',async()=>{try{await auth.signOut()}catch(e){status.textContent='Keluar gagal: '+e.message}});
 
