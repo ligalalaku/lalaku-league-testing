@@ -313,11 +313,34 @@ const matchDb=testDb.ref("lalakuLeagueSeason2/matches");
 function validScoreRecord(s){return !!s && Number.isInteger(Number(s.homeScore)) && Number.isInteger(Number(s.awayScore)) && Number(s.homeScore)>=0 && Number(s.awayScore)>=0 && players.includes(s.home) && players.includes(s.away);}
 function getStandings(){
  const rows=Object.fromEntries(players.map(p=>[p,{p,main:0,w:0,d:0,l:0,gm:0,gk:0,pts:0}]));
- const records=Object.values(scores||{}).filter(validScoreRecord);
- records.forEach(s=>{const h=rows[s.home],a=rows[s.away],hs=Number(s.homeScore),as=Number(s.awayScore);h.main++;a.main++;h.gm+=hs;h.gk+=as;a.gm+=as;a.gk+=hs;if(hs>as){h.w++;h.pts+=3;a.l++;}else if(hs<as){a.w++;a.pts+=3;h.l++;}else{h.d++;a.d++;h.pts++;a.pts++;}});
- const mini={}; players.forEach(p=>mini[p]={pts:0,sg:0,gm:0});
- records.forEach(s=>{const hs=Number(s.homeScore),as=Number(s.awayScore),h=mini[s.home],a=mini[s.away];h.gm+=hs;a.gm+=as;h.sg+=hs-as;a.sg+=as-hs;if(hs>as)h.pts+=3;else if(hs<as)a.pts+=3;else{h.pts++;a.pts++;}});
- return Object.values(rows).sort((a,b)=>{if(b.pts!==a.pts)return b.pts-a.pts;const asg=a.gm-a.gk,bsg=b.gm-b.gk;if(bsg!==asg)return bsg-asg;if(b.gm!==a.gm)return b.gm-a.gm;const tied=Object.values(rows).filter(r=>r.pts===a.pts&&(r.gm-r.gk)===asg&&r.gm===a.gm).map(r=>r.p);if(tied.length>1){const x=mini[a.p],y=mini[b.p];if(y.pts!==x.pts)return y.pts-x.pts;if(y.sg!==x.sg)return y.sg-x.sg;if(y.gm!==x.gm)return y.gm-x.gm;}return a.p.localeCompare(b.p);});
+ const records=Object.entries(scores||{}).filter(([id,s])=>validScoreRecord(s));
+ records.forEach(([id,s])=>{const h=rows[s.home],a=rows[s.away],hs=Number(s.homeScore),as=Number(s.awayScore);h.main++;a.main++;h.gm+=hs;h.gk+=as;a.gm+=as;a.gk+=hs;if(hs>as){h.w++;h.pts+=3;a.l++;}else if(hs<as){a.w++;a.pts+=3;h.l++;}else{h.d++;a.d++;h.pts++;a.pts++;}});
+ // Head-to-head points are calculated only among players tied on PTS, SG, and GM.
+ const headToHeadPoints=(player,group)=>records.reduce((total,[id,s])=>{
+  if(!group.has(s.home)||!group.has(s.away))return total;
+  const hs=Number(s.homeScore),as=Number(s.awayScore);
+  if(s.home===player){return total+(hs>as?3:hs===as?1:0);}
+  if(s.away===player){return total+(as>hs?3:as===hs?1:0);}
+  return total;
+ },0);
+ const baseCompare=(a,b)=>{
+  if(b.pts!==a.pts)return b.pts-a.pts;
+  const asg=a.gm-a.gk,bsg=b.gm-b.gk;
+  if(bsg!==asg)return bsg-asg;
+  if(b.gm!==a.gm)return b.gm-a.gm;
+  return 0;
+ };
+ const list=Object.values(rows).sort(baseCompare);
+ for(let i=0;i<list.length;){
+  let j=i+1;
+  while(j<list.length&&baseCompare(list[i],list[j])===0)j++;
+  if(j-i>1){
+   const group=new Set(list.slice(i,j).map(r=>r.p));
+   list.slice(i,j).sort((a,b)=>headToHeadPoints(b.p,group)-headToHeadPoints(a.p,group)||a.p.localeCompare(b.p)).forEach((r,k)=>{list[i+k]=r;});
+  }
+  i=j;
+ }
+ return list;
 }
 function scoreForFixture(leg,day,index){return scores[`leg${leg}_md${String(day).padStart(2,"0")}_match${String(index+1).padStart(2,"0")}`];}
 function recordTime(record){const raw=record&&record.updatedAt;if(typeof raw==="number"&&Number.isFinite(raw))return raw;const numeric=Number(raw);if(Number.isFinite(numeric)&&raw!==null&&raw!=="")return numeric;const parsed=Date.parse(raw||"");return Number.isFinite(parsed)?parsed:0;}
