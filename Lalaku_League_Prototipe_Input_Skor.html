@@ -5,37 +5,19 @@
 <title>Lalaku League Season 2 — Uji Input Skor</title>
 <style>
 :root{color-scheme:dark;--bg:#050a12;--panel:#0d1b2e;--gold:#f1c85b;--gold2:#ffe9a0;--line:#344b68;--muted:#b6c2d3;--white:#f7f8fb}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#17426b 0,transparent 45%),linear-gradient(180deg,#07101e,#03070d 75%);color:var(--white);font:15px/1.5 system-ui,sans-serif;min-height:100vh}.wrap{width:min(100%,980px);margin:auto;padding:18px 14px 42px}.header{text-align:center;padding:14px 0 20px}.kicker{color:#d1dced;letter-spacing:.1em}.brand{font-size:clamp(2.2rem,9vw,4.5rem);font-weight:1000;line-height:.9;letter-spacing:-.04em;color:#ffd85c;text-shadow:0 3px #9b5c12,0 8px 20px #000}.brand span{display:block;margin-top:9px;font-size:.58em;color:#e9eef7}.tag{color:var(--gold2);font-size:.78rem;font-weight:800;letter-spacing:.12em;margin:16px 0}.line{height:2px;background:linear-gradient(90deg,transparent,#b98b2f,#fff1b0,#d5a844,transparent)}.panel{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#0c1a2c,#07111e);padding:16px;box-shadow:0 12px 30px #0005}.panel h2,.panel h3{margin:0 0 10px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{display:flex;flex-direction:column;gap:5px;margin:8px 0}.field input,.field select{width:100%;min-width:0;background:#06101d;color:#fff;border:1px solid #526985;border-radius:9px;padding:11px;font:inherit}.btn{border:1px solid var(--gold);border-radius:9px;padding:10px 13px;background:var(--gold);color:#111827;font-weight:800;font:inherit;cursor:pointer}.btn.secondary{background:#101f33;color:white;border-color:#526985}.btn:disabled{opacity:.45;cursor:not-allowed}.status{padding:10px;border-radius:9px;background:#081525;border:1px solid #344b68;margin-top:10px;overflow-wrap:anywhere}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.tabs button{background:#0b1829;color:#d5dfed;border:1px solid #526985;border-radius:9px;padding:9px 11px}.tabs button.active{background:linear-gradient(135deg,#f1c85b,#c18d2e);color:#111827}.fixture{border-top:1px solid #293b52;padding:12px 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px}.team{font-weight:750;overflow-wrap:anywhere}.team:last-child{text-align:right}.versus{text-align:center;color:var(--gold);font-size:.75rem;font-weight:900}.scoreline{display:flex;gap:5px;align-items:center;justify-content:center;margin-top:5px}.scoreline input{width:48px;text-align:center;padding:7px;background:#06101d;color:white;border:1px solid #526985;border-radius:7px;font:inherit}.small{font-size:.78rem}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:600px;font-size:.85rem}th,td{text-align:left;padding:9px;border-bottom:1px solid #293b52}th{color:var(--gold2)}.right{text-align:right}.hidden{display:none!important}.warning{color:#ffe49a}.footer{text-align:center;color:#71839b;font-size:.75rem;margin:24px 0 0}@media(max-width:480px){.grid{grid-template-columns:1fr}.panel{padding:13px}.fixture{gap:5px}.team{font-size:.88rem}.scoreline input{width:40px}}
-.completed {
-  color: #4ade80;
-  background: transparent;
-  border: 1px solid #22c55e;
-  border-radius: 6px;
-  padding: 3px 10px;
-  font-weight: 700;
-}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 </head><body><div class="wrap">
 <header class="header"><div class="kicker">e_Football • TESTING ENVIRONMENT</div><div class="brand">LALAKU <span>SEASON 2</span></div><div class="tag">COMPETE • CONQUER • BECOME LEGEND</div><div class="line"></div></header>
 <section class="panel"><h2>Uji Input Skor Admin</h2><p class="muted">File prototipe terpisah. Menggunakan Firebase Testing, bukan database produksi. Jangan gunakan untuk data resmi sebelum Rules diuji.</p><div class="grid"><label class="field">Email admin<input id="email" type="email" autocomplete="username" placeholder="Email akun Firebase Testing"></label><label class="field">Kata sandi<input id="password" type="password" autocomplete="current-password" placeholder="Kata sandi akun Testing"></label></div><div class="tabs"><button id="login" class="active">Masuk</button><button id="logout" class="secondary">Keluar</button><button id="load">Muat skor tersimpan</button></div><div id="authStatus" class="status">Status: belum masuk. Belum ada data yang dibaca atau ditulis.</div></section>
 <section class="panel"><h2>Jadwal & Skor</h2><p class="muted">12 pemain · 11 matchday per putaran · 6 pertandingan per matchday · 132 laga total.</p><div class="tabs"><button id="leg1" class="active">Putaran 1 · 66 laga</button><button id="leg2">Putaran 2 · 66 laga</button></div><label class="field">Pilih matchday<select id="matchday"></select></label><div id="games"></div><div class="status small">ID tetap: <code>leg1_md01_match01</code> (contoh). Simpan dilakukan per pertandingan agar tidak menimpa catatan laga lain.</div></section>
-<section class="panel">
-  <h2>Hasil Pertandingan</h2>
-  <p class="muted">Daftar pertandingan dengan skor yang sudah tersimpan.</p>
-  <div id="results" class="tablewrap"></div>
-</section>
-
-<section class="panel">
-  <h2>Klasemen dari skor tersimpan</h2>
-  <p class="muted">Hanya pertandingan dengan skor numerik tersimpan yang dihitung.</p>
-  <div id="standings" class="tablewrap"></div>
-</section>
-
-<p class="footer">Lalaku League Season 2 · Prototipe Testing · Tidak mengubah website utama</p>
-</div>
+<section class="panel"><h2>Klasemen dari skor tersimpan</h2><p class="muted">Hanya pertandingan dengan skor numerik tersimpan yang dihitung.</p><div id="standings" class="tablewrap"></div></section><p class="footer">Lalaku League Season 2 · Prototipe Testing · Tidak mengubah website utama</p></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyDRPfe9mhnfW4KaOrbyTpDBYks3L7Mxl_0",authDomain:"lalaku-league-testing.firebaseapp.com",databaseURL:"https://lalaku-league-testing-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"lalaku-league-testing",storageBucket:"lalaku-league-testing.firebasestorage.app",messagingSenderId:"564911465871",appId:"1:564911465871:web:aa35ad269d787e0e27d7fa",measurementId:"G-MDVXD56JWZ"};
 firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),db=firebase.database();
+// Tampilan dan tindakan input hanya diaktifkan untuk satu email admin yang ditetapkan.
+const ADMIN_EMAIL='yarmanpolsuspas@gmail.com';
+function isAdmin(user){return !!user && String(user.email||'').trim().toLowerCase()===ADMIN_EMAIL.toLowerCase();}
 const players=["Bang YAR","Ketua Sekte Gn. Santi","D. A. Mrp","Yudha","Tito","Waone","Radiansyah","Zebua","Manik","Okri","Nino","Fiqri"];
 function generateRoundRobin(names){const ring=[...names],rounds=[];for(let r=0;r<ring.length-1;r++){const games=[];for(let i=0;i<ring.length/2;i++){let a=ring[i],b=ring[ring.length-1-i];if((r+i)%2===1)[a,b]=[b,a];games.push([a,b]);}rounds.push(games);const fixed=ring[0],rest=ring.slice(1);rest.unshift(rest.pop());ring.splice(0,ring.length,fixed,...rest);}return rounds}
 const legOne=generateRoundRobin(players),legTwo=legOne.map(day=>day.map(([h,a])=>[a,h]));let selectedLeg=1,selectedDay=1,scores={};
@@ -43,67 +25,28 @@ const $=id=>document.getElementById(id);const status=$('authStatus');
 for(let n=1;n<=11;n++){const o=document.createElement('option');o.value=n;o.textContent=`Matchday ${n}`;$('matchday').appendChild(o)}
 function matchId(leg,day,index){return `leg${leg}_md${String(day).padStart(2,'0')}_match${String(index+1).padStart(2,'0')}`}
 function currentGames(){return (selectedLeg===1?legOne:legTwo)[selectedDay-1]}
-function renderGames(){const games=currentGames();$('games').innerHTML=games.map(([home,away],i)=>{const id=matchId(selectedLeg,selectedDay,i),s=scores[id],done=s&&Number.isInteger(s.homeScore)&&Number.isInteger(s.awayScore);return `<div class="fixture"><div class="team">${home}</div><div class="versus">VS<div class="scoreline"><input aria-label="Gol ${home}" type="number" min="0" step="1" inputmode="numeric" id="h-${id}" value="${done?s.homeScore:''}" ${auth.currentUser?'':'disabled'}><b>:</b><input aria-label="Gol ${away}" type="number" min="0" step="1" inputmode="numeric" id="a-${id}" value="${done?s.awayScore:''}" ${auth.currentUser?'':'disabled'}></div><div class="small ${done?'completed':'warning'}">${done?'SELESAI':'BELUM DIMAINKAN'}</div>${auth.currentUser?'<button class="btn small save" data-id="'+id+'" data-home="'+home+'" data-away="'+away+'">Simpan skor</button>':''}</div><div class="team">${away}</div></div>`}).join('');}
+function renderGames(){const games=currentGames();$('games').innerHTML=games.map(([home,away],i)=>{const id=matchId(selectedLeg,selectedDay,i),s=scores[id],done=s&&Number.isInteger(s.homeScore)&&Number.isInteger(s.awayScore);return `<div class="fixture"><div class="team">${home}</div><div class="versus">VS<div class="scoreline"><input aria-label="Gol ${home}" type="number" min="0" step="1" inputmode="numeric" id="h-${id}" value="${done?s.homeScore:''}" ${isAdmin(auth.currentUser)?'':'disabled'}><b>:</b><input aria-label="Gol ${away}" type="number" min="0" step="1" inputmode="numeric" id="a-${id}" value="${done?s.awayScore:''}" ${isAdmin(auth.currentUser)?'':'disabled'}></div><div class="small ${done?'warning':''}">${done?'Tersimpan':'Belum dimainkan'}</div>${isAdmin(auth.currentUser)?'<button class="btn small save" data-id="'+id+'" data-home="'+home+'" data-away="'+away+'">Simpan skor</button>':''}</div><div class="team">${away}</div></div>`}).join('');}
 function renderStandings(){const rows=Object.fromEntries(players.map(p=>[p,{p,main:0,w:0,d:0,l:0,gm:0,gk:0,pts:0}]));for(const s of Object.values(scores)){if(!s||!Number.isInteger(s.homeScore)||!Number.isInteger(s.awayScore)||!rows[s.home]||!rows[s.away])continue;const h=rows[s.home],a=rows[s.away];h.main++;a.main++;h.gm+=s.homeScore;h.gk+=s.awayScore;a.gm+=s.awayScore;a.gk+=s.homeScore;if(s.homeScore>s.awayScore){h.w++;h.pts+=3;a.l++}else if(s.homeScore<s.awayScore){a.w++;a.pts+=3;h.l++}else{h.d++;a.d++;h.pts++;a.pts++}}const list=Object.values(rows).sort((a,b)=>b.pts-a.pts||(b.gm-b.gk)-(a.gm-a.gk)||b.gm-a.gm||a.p.localeCompare(b.p));$('standings').innerHTML=`<table><thead><tr><th>Pos</th><th>Pemain</th><th>MAIN</th><th>M</th><th>S</th><th>K</th><th>GM</th><th>GK</th><th>SG</th><th>PTS</th></tr></thead><tbody>${list.map((r,i)=>`<tr><td>${i+1}</td><td>${r.p}</td><td>${r.main}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gm}</td><td>${r.gk}</td><td>${r.gm-r.gk}</td><td><b>${r.pts}</b></td></tr>`).join('')}</tbody></table>`}
-function renderResults(){
-  const completed = Object.values(scores)
-    .filter(s =>
-      s &&
-      Number.isInteger(s.homeScore) &&
-      Number.isInteger(s.awayScore) &&
-      players.includes(s.home) &&
-      players.includes(s.away)
-    )
-    .sort((a,b) =>
-      (b.round-a.round) ||
-      (b.matchday-a.matchday)
-    );
-
-  $('results').innerHTML = completed.length
-    ? `<table>
-        <thead>
-          <tr>
-            <th>Putaran</th>
-            <th>Matchday</th>
-            <th>Pertandingan</th>
-            <th>Skor</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${completed.map(s => `
-            <tr>
-              <td>${s.round}</td>
-              <td>${s.matchday}</td>
-              <td>${s.home} vs ${s.away}</td>
-              <td><b>${s.homeScore} - ${s.awayScore}</b></td>
-              <td><span class="completed">SELESAI</span></td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`
-    : '<p class="muted">Belum ada pertandingan yang selesai.</p>';
-}
-function render(){
-  renderGames();
-  renderResults();
-  renderStandings();
-}
+function render(){renderGames();renderStandings()}
 $('login').addEventListener('click',async()=>{const email=$('email').value.trim(),password=$('password').value;if(!email||!password){status.textContent='Masukkan email dan kata sandi akun Firebase Testing.';return}status.textContent='Sedang masuk...';try{await auth.signInWithEmailAndPassword(email,password)}catch(e){status.textContent='Login gagal: '+(e.code||e.message)}});
 $('logout').addEventListener('click',async()=>{try{await auth.signOut()}catch(e){status.textContent='Keluar gagal: '+e.message}});
 
 auth.onAuthStateChanged(async user=>{
-  if(user){
-    status.textContent=`Masuk sebagai ${user.email}. Memuat skor dari Firebase Testing...`;
+  if(isAdmin(user)){
+    status.textContent=`Admin terverifikasi (${user.email}). Memuat skor dari Firebase Testing...`;
+  }else if(user){
+    status.textContent=`Akun ${user.email} berhasil login, tetapi bukan admin. Input skor dinonaktifkan; memuat data sesuai izin baca Firebase Testing...`;
   }else{
     status.textContent='Mode pengunjung: memuat skor dari Firebase Testing.';
   }
   try{
     const snap=await db.ref('lalakuLeagueSeason2/matches').once('value');
     scores=snap.val()||{};
-    status.textContent=user
-      ? `Masuk sebagai ${user.email}. Skor berhasil dimuat dari Firebase Testing.`
-      : 'Mode pengunjung: skor berhasil dimuat dari Firebase Testing.';
+    status.textContent=isAdmin(user)
+      ? `Admin terverifikasi (${user.email}). Skor berhasil dimuat dari Firebase Testing.`
+      : user
+        ? `Login sebagai ${user.email}; bukan admin. Input skor tetap dinonaktifkan. Data berhasil dimuat sesuai izin Firebase Testing.`
+        : 'Mode pengunjung: skor berhasil dimuat dari Firebase Testing.';
   }catch(e){
     status.textContent='Gagal memuat skor: '+(e.code||e.message);
   }
@@ -111,7 +54,7 @@ auth.onAuthStateChanged(async user=>{
 });
   
 $('leg1').addEventListener('click',()=>{selectedLeg=1;$('leg1').classList.add('active');$('leg2').classList.remove('active');render()});$('leg2').addEventListener('click',()=>{selectedLeg=2;$('leg2').classList.add('active');$('leg1').classList.remove('active');render()});$('matchday').addEventListener('change',e=>{selectedDay=Number(e.target.value);render()});
-$('load').addEventListener('click',async()=>{if(!auth.currentUser){status.textContent='Login terlebih dahulu untuk memuat skor sesuai aturan Testing saat ini.';return}status.textContent='Membaca skor dari Firebase Testing...';try{const snap=await db.ref('lalakuLeagueSeason2/matches').once('value');scores=snap.val()||{};status.textContent='Pembacaan selesai. Tidak ada data yang ditulis.';render()}catch(e){status.textContent='Gagal membaca skor: '+(e.code||e.message)}});
-$('games').addEventListener('click',async e=>{const b=e.target.closest('[data-id]');if(!b)return;if(!auth.currentUser){status.textContent='Login admin diperlukan.';return}const id=b.dataset.id,home=b.dataset.home,away=b.dataset.away,hv=$( 'h-'+id).value,av=$( 'a-'+id).value;if(hv===''||av===''||!Number.isInteger(Number(hv))||!Number.isInteger(Number(av))||Number(hv)<0||Number(av)<0){status.textContent='Masukkan dua skor berupa bilangan bulat 0 atau lebih.';return}const record={matchId:id,round:selectedLeg,matchday:selectedDay,home,away,homeScore:Number(hv),awayScore:Number(av),status:'played',updatedAt:Date.now(),updatedBy:auth.currentUser.uid};status.textContent='Menyimpan '+id+'...';try{await db.ref('lalakuLeagueSeason2/matches/'+id).set(record);scores[id]=record;status.textContent='Skor berhasil disimpan ke Firebase Testing: '+id;render()}catch(err){status.textContent='Gagal menyimpan: '+(err.code||err.message)+'. Periksa Rules Testing; tidak ada perubahan pada produksi.'}});
+$('load').addEventListener('click',async()=>{if(!isAdmin(auth.currentUser)){status.textContent='Hanya akun admin yang ditetapkan yang boleh memuat ulang panel input skor.';return}status.textContent='Membaca skor dari Firebase Testing...';try{const snap=await db.ref('lalakuLeagueSeason2/matches').once('value');scores=snap.val()||{};status.textContent='Pembacaan selesai. Tidak ada data yang ditulis.';render()}catch(e){status.textContent='Gagal membaca skor: '+(e.code||e.message)}});
+$('games').addEventListener('click',async e=>{const b=e.target.closest('[data-id]');if(!b)return;if(!isAdmin(auth.currentUser)){status.textContent='Ditolak: hanya akun admin yang ditetapkan boleh menyimpan skor.';render();return}const id=b.dataset.id,home=b.dataset.home,away=b.dataset.away,hv=$( 'h-'+id).value,av=$( 'a-'+id).value;if(hv===''||av===''||!Number.isInteger(Number(hv))||!Number.isInteger(Number(av))||Number(hv)<0||Number(av)<0){status.textContent='Masukkan dua skor berupa bilangan bulat 0 atau lebih.';return}const record={matchId:id,round:selectedLeg,matchday:selectedDay,home,away,homeScore:Number(hv),awayScore:Number(av),status:'played',updatedAt:Date.now(),updatedBy:auth.currentUser.uid};status.textContent='Menyimpan '+id+'...';try{await db.ref('lalakuLeagueSeason2/matches/'+id).set(record);scores[id]=record;status.textContent='Skor berhasil disimpan ke Firebase Testing: '+id;render()}catch(err){status.textContent='Gagal menyimpan: '+(err.code||err.message)+'. Periksa Rules Testing; tidak ada perubahan pada produksi.'}});
 render();
 </script></body></html>
