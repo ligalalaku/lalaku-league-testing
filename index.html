@@ -320,17 +320,41 @@ function getStandings(){
  return Object.values(rows).sort((a,b)=>{if(b.pts!==a.pts)return b.pts-a.pts;const asg=a.gm-a.gk,bsg=b.gm-b.gk;if(bsg!==asg)return bsg-asg;if(b.gm!==a.gm)return b.gm-a.gm;const tied=Object.values(rows).filter(r=>r.pts===a.pts&&(r.gm-r.gk)===asg&&r.gm===a.gm).map(r=>r.p);if(tied.length>1){const x=mini[a.p],y=mini[b.p];if(y.pts!==x.pts)return y.pts-x.pts;if(y.sg!==x.sg)return y.sg-x.sg;if(y.gm!==x.gm)return y.gm-x.gm;}return a.p.localeCompare(b.p);});
 }
 function scoreForFixture(leg,day,index){return scores[`leg${leg}_md${String(day).padStart(2,"0")}_match${String(index+1).padStart(2,"0")}`];}
-matchDb.on("value",snap=>{scores=snap.val()||{};if(!detail.classList.contains("hidden")){const h=detail.querySelector("h2");if(h&&h.textContent==="Klasemen Sementara")detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>Klasemen Sementara</h2>${renderStandings()}`;else if(h&&h.textContent==="Jadwal Pertandingan")refreshSchedule();else if(h&&h.textContent==="Hasil Pertandingan")refreshResults();}});
+matchDb.on("value",snap=>{scores=snap.val()||{};if(!detail.classList.contains("hidden")){const h=detail.querySelector("h2");if(h&&h.textContent==="Dashboard Liga")detail.innerHTML=`<button class="btn secondary" data-page="menu">← Kembali ke Menu</button><h2>Dashboard Liga</h2>${renderDashboard()}`;else if(h&&h.textContent==="Klasemen Sementara")detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>Klasemen Sementara</h2>${renderStandings()}`;else if(h&&h.textContent==="Jadwal Pertandingan")refreshSchedule();else if(h&&h.textContent==="Hasil Pertandingan")refreshResults();}});
 const home=document.getElementById("home"),detail=document.getElementById("detail");
 function setActiveCard(page){document.querySelectorAll(".menu-card").forEach(card=>{const active=card.dataset.page===page;card.classList.toggle("active",active);if(active)card.setAttribute("aria-current","page");else card.removeAttribute("aria-current");});}
-function showDashboard(){setActiveCard("dashboard");home.classList.remove("hidden");detail.classList.add("hidden");window.scrollTo({top:0,behavior:"smooth"});}
+function showDashboard(){openPage("dashboard");}
+function showHomeMenu(){setActiveCard("dashboard");home.classList.remove("hidden");detail.classList.add("hidden");window.scrollTo({top:0,behavior:"smooth"});}
+function renderDashboard(){
+ const valid=Object.entries(scores||{}).filter(([id,r])=>validScoreRecord(r));
+ const table=getStandings();
+ const leader=table[0];
+ const latest=valid.length?valid.slice().sort((a,b)=>Number((b[1].updatedAt)||0)-Number((a[1].updatedAt)||0)).slice(-1)[0]:null;
+ let next=null;
+ for(let leg=1;leg<=2&&!next;leg++){
+  const rounds=leg===1?firstRound:secondRound;
+  for(let day=1;day<=11&&!next;day++){
+   for(let i=0;i<rounds[day-1].length;i++){
+    const id=`leg${leg}_md${String(day).padStart(2,"0")}_match${String(i+1).padStart(2,"0")}`;
+    if(!validScoreRecord((scores||{})[id])){next={home:rounds[day-1][i][0],away:rounds[day-1][i][1],leg,day};break;}
+   }
+  }
+ }
+ const latestHtml=latest?`<div class="fixture-row"><div class="fixture-team">${latest[1].home}</div><div><div class="fixture-vs">${Number(latest[1].homeScore)} – ${Number(latest[1].awayScore)}</div><span class="badge fixture-status" style="border-color:#20a464;color:#9af0bd">SELESAI</span></div><div class="fixture-team">${latest[1].away}</div></div>`:`<p class="muted">Belum ada pertandingan yang tercatat.</p>`;
+ const nextHtml=next?`<div class="fixture-row"><div class="fixture-team">${next.home}</div><div><div class="fixture-vs">VS</div><span class="badge">Putaran ${next.leg} · Pekan ${next.day}</span></div><div class="fixture-team">${next.away}</div></div>`:`<p class="muted">Semua jadwal memiliki hasil yang tercatat.</p>`;
+ return `<p class="muted">Ringkasan liga langsung dari data hasil Firebase Testing.</p><div class="stats"><div class="stat"><span>Jumlah Pemain</span><b>12</b></div><div class="stat"><span>Pertandingan Selesai</span><b>${valid.length} / 132</b></div><div class="stat"><span>Pemimpin Klasemen</span><b>${leader?leader.p:"—"}</b><small>${leader?leader.pts:0} poin</small></div></div><h3>Aktivitas Pertandingan Terbaru</h3>${latestHtml}<h3>Pertandingan Berikutnya</h3>${nextHtml}<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button class="btn secondary" data-page="standings">Lihat Klasemen</button><button class="btn secondary" data-page="schedule">Lihat Jadwal</button><button class="btn secondary" data-page="results">Semua Hasil</button></div>`;
+}
 
 function openPage(page){
   if(page==="matches") page="schedule";
+  if(page==="menu"){showHomeMenu();return;}
   setActiveCard(page);
 
   if(page==="dashboard"){
-    showDashboard();
+    home.classList.add("hidden");
+    detail.classList.remove("hidden");
+    detail.innerHTML=`<button class="btn secondary" data-page="menu">← Kembali ke Menu</button><h2>Dashboard Liga</h2>${renderDashboard()}`;
+    window.scrollTo({top:0,behavior:"smooth"});
     return;
   }
 
@@ -338,6 +362,7 @@ function openPage(page){
   detail.classList.remove("hidden");
 
   const titles={
+    dashboard:"Dashboard Liga",
     schedule:"Jadwal Pertandingan",
     standings:"Klasemen Sementara",
     players:"Daftar Pemain",
@@ -359,7 +384,7 @@ function openPage(page){
     body=`<h3>Identitas Liga</h3><p class="muted">e_Football Lalaku League Season 2 — COMPETE • CONQUER • BECOME LEGEND.</p><div class="stats"><div class="stat"><span>Peserta</span><b>12</b></div><div class="stat"><span>Matchday</span><b>22</b></div><div class="stat"><span>Total laga</span><b>132</b></div></div><h3>Format Kompetisi</h3><p>Setiap pemain bertemu 11 lawan sebanyak dua kali. Putaran pertama dan kedua masing-masing terdiri dari 11 matchday, dengan enam pertandingan per matchday. Posisi kandang dan tandang dibalik pada pertemuan kedua.</p><h3>Aturan data</h3><p class="muted">Klasemen dan statistik pertandingan harus dihitung dari hasil yang sah. Integrasi data Firebase untuk halaman-halaman ini masih perlu diuji.</p>`;
   }
 
-  detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>${titles[page]||"Informasi Liga"}</h2>${body}`;
+  detail.innerHTML=`<button class="btn secondary" data-page="menu">← Kembali ke Menu</button><h2>${titles[page]||"Informasi Liga"}</h2>${body}`;
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function renderStandings(){const list=getStandings();const played=Object.values(scores||{}).filter(validScoreRecord).length;const rows=list.map((r,i)=>`<tr><td>${i+1}</td><td>${r.p}</td><td>${r.main}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gm}</td><td>${r.gk}</td><td>${r.gm-r.gk}</td><td><b>${r.pts}</b></td></tr>`).join("");return `<p class="muted">Klasemen otomatis berdasarkan skor pertandingan yang tersimpan di Firebase Testing.</p><div class="standings-actions"><span class="badge">${played} pertandingan selesai · 12 pemain</span><button class="btn pdf-btn" type="button" id="print-standings">▣ Cetak / Simpan PDF</button></div><div class="standings-wrap"><table class="standings-table"><thead><tr><th>POS</th><th>PEMAIN</th><th>MAIN</th><th>MENANG</th><th>SERI</th><th>KALAH</th><th>GM</th><th>GK</th><th>SG</th><th>POIN</th></tr></thead><tbody>${rows}</tbody></table></div><p class="standings-note">GM = gol memasukkan · GK = gol kemasukan · SG = selisih gol. Urutan: Poin → SG → GM → Head-to-Head; jika masih sama, nama pemain. Skor dibaca dari Firebase Testing.</p>`;}
