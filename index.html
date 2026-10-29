@@ -312,13 +312,44 @@ let selectedRound=1,selectedMatchday=1;
 const home=document.getElementById("home"),detail=document.getElementById("detail");
 function setActiveCard(page){document.querySelectorAll(".menu-card").forEach(card=>{const active=card.dataset.page===page;card.classList.toggle("active",active);if(active)card.setAttribute("aria-current","page");else card.removeAttribute("aria-current");});}
 function showDashboard(){setActiveCard("dashboard");home.classList.remove("hidden");detail.classList.add("hidden");window.scrollTo({top:0,behavior:"smooth"});}
-function openPage(page){setActiveCard(page);if(page==="dashboard"){showDashboard();return;}home.classList.add("hidden");detail.classList.remove("hidden");const titles={standings:"Klasemen Sementara",players:"Daftar Pemain",matches:"Jadwal Pertandingan",results:"Hasil Pertandingan",info:"Informasi Liga"};let body="";
-if(page==="standings")body=renderStandings();
-else if(page==="players")body=`<p class="muted">Pilih kartu pemain untuk membuka profil. Area foto sudah disiapkan sebagai placeholder dan bisa diganti dengan foto asli 12 peserta.</p><div class="player-grid">${players.map((p,i)=>`<button class="player-card" data-player="${p}" aria-label="Buka profil ${p}"><span class="player-card-art"><span class="player-shield">LALAKU · S2</span><span class="player-silhouette" aria-hidden="true"></span></span><span class="player-card-name"><strong>${p}</strong><small>e_FOOTBALL · SEASON 2</small></span></button>`).join("")}</div><p class="player-card-hint">Ketuk salah satu kartu untuk melihat profil pemain.</p>`;
-else if(page==="matches")body=renderSchedule();
-else if(page==="results")body=`<p class="muted">Belum ada hasil resmi yang ditampilkan karena website belum terhubung ke data pertandingan.</p><div class="row-item"><b>Hasil pertandingan terbaru</b><span class="badge">Menunggu data</span></div><p>Setelah admin menyimpan skor valid, hasil akan tampil di sini dan memperbarui klasemen serta riwayat pemain.</p>`;
-else body=`<h3>Identitas Liga</h3><p class="muted">e_Football Lalaku League Season 2 — COMPETE • CONQUER • BECOME LEGEND.</p><div class="stats"><div class="stat"><span>Peserta</span><b>12</b></div><div class="stat"><span>Matchday</span><b>22</b></div><div class="stat"><span>Total laga</span><b>132</b></div></div><h3>Format Kompetisi</h3><p>Setiap pemain bertemu 11 lawan sebanyak dua kali. Putaran pertama dan kedua masing-masing terdiri dari 11 matchday, dengan enam pertandingan per matchday. Posisi kandang dan tandang dibalik pada pertemuan kedua.</p><h3>Aturan data</h3><p class="muted">Klasemen dan statistik akan dihitung dari hasil pertandingan yang disimpan secara sah. Prototipe ini belum terhubung ke Firebase.</p>`;
-detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>${titles[page]}</h2>${body}`;window.scrollTo({top:0,behavior:"smooth"});}
+
+function openPage(page){
+  if(page==="matches") page="schedule";
+  setActiveCard(page);
+
+  if(page==="dashboard"){
+    showDashboard();
+    return;
+  }
+
+  home.classList.add("hidden");
+  detail.classList.remove("hidden");
+
+  const titles={
+    schedule:"Jadwal Pertandingan",
+    standings:"Klasemen Sementara",
+    players:"Daftar Pemain",
+    results:"Hasil Pertandingan",
+    info:"Informasi Liga"
+  };
+
+  let body="";
+
+  if(page==="standings"){
+    body=renderStandings();
+  }else if(page==="players"){
+    body=`<p class="muted">Pilih kartu pemain untuk membuka profil. Area foto masih berupa placeholder dan dapat diganti dengan foto asli 12 peserta.</p><div class="player-grid">${players.map(p=>`<button class="player-card" data-player="${p}" aria-label="Buka profil ${p}"><span class="player-card-art"><span class="player-shield">LALAKU · S2</span><span class="player-silhouette" aria-hidden="true"></span></span><span class="player-card-name"><strong>${p}</strong><small>e_FOOTBALL · SEASON 2</small></span></button>`).join("")}</div><p class="player-card-hint">Ketuk salah satu kartu untuk melihat profil pemain.</p>`;
+  }else if(page==="schedule"){
+    body=renderSchedule();
+  }else if(page==="results"){
+    body=`<p class="muted">Belum ada hasil resmi yang ditampilkan karena halaman ini belum terhubung ke data pertandingan Firebase.</p><div class="row-item"><b>Hasil pertandingan terbaru</b><span class="badge">Menunggu data</span></div><p>Setelah admin menyimpan skor valid, hasil dapat ditampilkan dan digunakan untuk memperbarui klasemen serta riwayat pemain.</p>`;
+  }else{
+    body=`<h3>Identitas Liga</h3><p class="muted">e_Football Lalaku League Season 2 — COMPETE • CONQUER • BECOME LEGEND.</p><div class="stats"><div class="stat"><span>Peserta</span><b>12</b></div><div class="stat"><span>Matchday</span><b>22</b></div><div class="stat"><span>Total laga</span><b>132</b></div></div><h3>Format Kompetisi</h3><p>Setiap pemain bertemu 11 lawan sebanyak dua kali. Putaran pertama dan kedua masing-masing terdiri dari 11 matchday, dengan enam pertandingan per matchday. Posisi kandang dan tandang dibalik pada pertemuan kedua.</p><h3>Aturan data</h3><p class="muted">Klasemen dan statistik pertandingan harus dihitung dari hasil yang sah. Integrasi data Firebase untuk halaman-halaman ini masih perlu diuji.</p>`;
+  }
+
+  detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>${titles[page]||"Informasi Liga"}</h2>${body}`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
 function renderStandings(){
 const rows=players.map((p,i)=>`<tr><td>${i+1}</td><td>${p}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr>`).join("");
 return `<p class="muted">Klasemen sementara · Statistik akan dihitung dari hasil pertandingan resmi setelah integrasi database.</p>
