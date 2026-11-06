@@ -175,6 +175,88 @@ function setActiveCard(page){document.querySelectorAll('.menu-card').forEach(car
 function showDashboard(){currentPage='dashboard';currentProfile=null;setActiveCard('dashboard');home.classList.remove('hidden');detail.classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'});renderDashboard();}
 function openPage(page){if(page==='matches')page='schedule';currentPage=page;currentProfile=null;if(page==='dashboard'){showDashboard();return;}setActiveCard(page);home.classList.add('hidden');detail.classList.remove('hidden');const titles={schedule:'Jadwal Pertandingan',standings:'Klasemen Sementara',players:'Daftar Pemain',results:'Hasil Pertandingan',info:'Informasi Liga'};let body='';if(page==='standings')body=renderStandings();else if(page==='players')body=renderPlayers();else if(page==='schedule')body=renderSchedule();else if(page==='results')body=renderResults();else body=`<h3>Identitas Liga</h3><p class="muted">e_Football Lalaku League Season 2 — COMPETE • CONQUER • BECOME LEGEND.</p><div class="stats"><div class="stat"><span>Peserta</span><b>12</b></div><div class="stat"><span>Matchday</span><b>22</b></div><div class="stat"><span>Total laga</span><b>132</b></div></div><h3>Format Kompetisi</h3><p>Setiap pemain bertemu 11 lawan sebanyak dua kali. Setiap putaran terdiri dari 11 matchday, enam pertandingan per matchday, dengan kandang dan tandang dibalik pada pertemuan kedua.</p>`;detail.innerHTML=`<button class="btn secondary" data-page="dashboard">← Kembali ke Dashboard</button><h2>${titles[page]||'Informasi Liga'}</h2>${body}`;window.scrollTo({top:0,behavior:'smooth'});}
 function openPlayer(name){currentPage='profile';currentProfile=name;setActiveCard('players');home.classList.add('hidden');detail.classList.remove('hidden');detail.innerHTML=renderPlayerProfile(name);window.scrollTo({top:0,behavior:'smooth'});}
+
+/* SMART BACK NAVIGATION + SCROLL RESTORATION
+   Hanya mengelola riwayat UI; tidak menyentuh Firebase atau data pertandingan. */
+const LALAKU_HISTORY_KEY='lalakuLeagueNavigation';
+try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(_){}
+function lalakuRouteSnapshot(){
+  return {
+    app:LALAKU_HISTORY_KEY,
+    page:currentPage||'dashboard',
+    profile:currentProfile||null,
+    scrollY:Math.max(0,window.scrollY||window.pageYOffset||0),
+    round:selectedRound,
+    matchday:selectedMatchday
+  };
+}
+function lalakuSaveCurrentPosition(){
+  const state=history.state;
+  if(state&&state.app===LALAKU_HISTORY_KEY){
+    history.replaceState({...state,...lalakuRouteSnapshot()},'',location.href);
+  }
+}
+function lalakuNavigatePage(page){
+  lalakuSaveCurrentPosition();
+  const normalized=page==='matches'?'schedule':page;
+  history.pushState({
+    app:LALAKU_HISTORY_KEY,page:normalized,profile:null,scrollY:0,
+    round:selectedRound,matchday:selectedMatchday
+  },'',location.href);
+  openPage(page);
+}
+function lalakuNavigatePlayer(name){
+  lalakuSaveCurrentPosition();
+  history.pushState({
+    app:LALAKU_HISTORY_KEY,page:'profile',profile:name,scrollY:0,
+    round:selectedRound,matchday:selectedMatchday
+  },'',location.href);
+  openPlayer(name);
+}
+function lalakuRestoreState(state){
+  if(!state||state.app!==LALAKU_HISTORY_KEY)return;
+  selectedRound=Number(state.round)||1;
+  selectedMatchday=Number(state.matchday)||1;
+  if(state.page==='profile'&&state.profile)openPlayer(state.profile);
+  else if(state.page==='dashboard')showDashboard();
+  else openPage(state.page||'dashboard');
+  const y=Math.max(0,Number(state.scrollY)||0);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    window.scrollTo({top:y,left:0,behavior:'auto'});
+  }));
+}
+history.replaceState({
+  app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,
+  round:selectedRound,matchday:selectedMatchday,root:true
+},'',location.href);
+/* Guard berada satu langkah di atas dashboard agar Back di halaman utama
+   dapat meminta konfirmasi sebelum meninggalkan website. */
+history.pushState({
+  app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,
+  round:selectedRound,matchday:selectedMatchday,guard:true
+},'',location.href);
+window.addEventListener('popstate',event=>{
+  const state=event.state;
+  if(!state||state.app!==LALAKU_HISTORY_KEY)return;
+  if(state.guard){
+    lalakuRestoreState(state);
+    return;
+  }
+  if(state.root||state.page==='dashboard'){
+    const leave=window.confirm('Keluar dari website Lalaku League Season 2?');
+    if(leave){
+      history.back();
+    }else{
+      history.pushState({
+        app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,
+        round:selectedRound,matchday:selectedMatchday,guard:true
+      },'',location.href);
+    }
+    return;
+  }
+  lalakuRestoreState(state);
+});
+
 function refreshCurrentPage(){if(currentPage==='dashboard')renderDashboard();else if(currentPage==='profile'&&currentProfile)detail.innerHTML=renderPlayerProfile(currentProfile);else openPage(currentPage);}
 let adminRound=1,adminMatchday=1,adminFixtureIndex=0;
 function renderAdminFixtures(){
@@ -209,7 +291,21 @@ $('admin-score-panel').addEventListener('click',async e=>{
 });
 $('admin-reload').addEventListener('click',async()=>{if(!isAdmin())return;$('admin-save-status').textContent='Memuat ulang skor...';try{const snap=await db.ref('lalakuLeagueSeason2/matches').once('value');scores=snap.val()||{};renderAll();renderAdminFixtures();$('admin-save-status').textContent='Data skor berhasil dimuat ulang.';}catch(e){$('admin-save-status').textContent='Gagal memuat: '+(e.code||e.message);}});
 function renderAll(){renderDashboard();if(currentPage!=='dashboard')refreshCurrentPage();}
-document.addEventListener('click',e=>{if(e.target.closest('#print-standings')){window.print();return;}const rb=e.target.closest('[data-round]');if(rb){selectedRound=Number(rb.dataset.round);refreshCurrentPage();return;}const mb=e.target.closest('[data-matchday]');if(mb){selectedMatchday=Number(mb.dataset.matchday);refreshCurrentPage();return;}const pb=e.target.closest('[data-page]');if(pb){openPage(pb.dataset.page);return;}const player=e.target.closest('[data-player]');if(player){openPlayer(player.dataset.player);return;}});
+document.addEventListener('click',e=>{
+  if(e.target.closest('#print-standings')){window.print();return;}
+  const rb=e.target.closest('[data-round]');
+  if(rb){lalakuSaveCurrentPosition();selectedRound=Number(rb.dataset.round);refreshCurrentPage();return;}
+  const mb=e.target.closest('[data-matchday]');
+  if(mb){lalakuSaveCurrentPosition();selectedMatchday=Number(mb.dataset.matchday);refreshCurrentPage();return;}
+  const pb=e.target.closest('[data-page]');
+  if(pb){
+    const target=pb.dataset.page;
+    if(currentPage==='profile'&&target==='players'){history.back();return;}
+    lalakuNavigatePage(target);return;
+  }
+  const player=e.target.closest('[data-player]');
+  if(player){lalakuNavigatePlayer(player.dataset.player);return;}
+});
 $('notificationButton').addEventListener('click',()=>alert('Notifikasi belum aktif.'));
 renderAdminFixtures();
 if(scheduleIssues.length)console.error('Validasi jadwal:',scheduleIssues);else console.info('Validasi jadwal: 132 fixture valid.');
