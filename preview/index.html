@@ -276,17 +276,44 @@ function lalakuShowExitDialog(){
     modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';stay.focus();
   });
 }
+let lalakuExitApproved=false;
+let lalakuExitDialogOpen=false;
 window.addEventListener('popstate',event=>{
   const state=event.state;
+  if(lalakuExitApproved){
+    // Pengguna sudah mengonfirmasi keluar; jangan tampilkan dialog lagi.
+    history.back();
+    return;
+  }
   if(!state||state.app!==LALAKU_HISTORY_KEY)return;
+
+  // Back dari subhalaman selalu mengikuti riwayat halaman; dialog tidak
+  // boleh muncul selama pengguna belum benar-benar berada di Dashboard.
   if(state.guard){
     lalakuRestoreState(state);
     return;
   }
-  if(state.root||state.page==='dashboard'){
+  if(state.page && state.page!=='dashboard' && !state.root){
+    lalakuRestoreState(state);
+    return;
+  }
+
+  // Hanya tampilkan satu kali saat Dashboard menjadi halaman aktif.
+  if((state.root||state.page==='dashboard') && currentPage==='dashboard' && !lalakuExitDialogOpen){
+    lalakuExitDialogOpen=true;
     lalakuShowExitDialog().then(leave=>{
-      if(leave){history.back();}
-      else{history.pushState({app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,round:selectedRound,matchday:selectedMatchday,guard:true},'',location.href);}
+      lalakuExitDialogOpen=false;
+      if(leave){
+        lalakuExitApproved=true;
+        history.back();
+      }else{
+        // Pasang kembali satu guard agar Back berikutnya tetap terkontrol,
+        // tanpa memunculkan dialog di subhalaman.
+        history.pushState({
+          app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,
+          round:selectedRound,matchday:selectedMatchday,guard:true
+        },'',location.href);
+      }
     });
     return;
   }
