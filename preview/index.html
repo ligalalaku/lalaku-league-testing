@@ -276,15 +276,22 @@ function lalakuShowExitDialog(){
     modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';stay.focus();
   });
 }
-let lalakuExitApproved=false;
 let lalakuExitDialogOpen=false;
+function lalakuLeaveWebsite(){
+  // Coba menutup tab bila browser mengizinkan (umumnya hanya tab yang
+  // dibuka oleh script). Jika ditolak, kembali ke halaman sebelumnya.
+  try{window.close();}catch(_){}
+  history.go(-1);
+  // Jika browser tidak memiliki halaman sebelumnya atau menolak navigasi,
+  // tinggalkan halaman ini sebagai fallback agar Dashboard tidak tertahan.
+  setTimeout(()=>{
+    if(document.visibilityState==='visible' && !document.hidden){
+      location.replace('about:blank');
+    }
+  },900);
+}
 window.addEventListener('popstate',event=>{
   const state=event.state;
-  if(lalakuExitApproved){
-    // Pengguna sudah mengonfirmasi keluar; jangan tampilkan dialog lagi.
-    history.back();
-    return;
-  }
   if(!state||state.app!==LALAKU_HISTORY_KEY)return;
 
   // Back dari subhalaman selalu mengikuti riwayat halaman; dialog tidak
@@ -304,8 +311,7 @@ window.addEventListener('popstate',event=>{
     lalakuShowExitDialog().then(leave=>{
       lalakuExitDialogOpen=false;
       if(leave){
-        lalakuExitApproved=true;
-        history.back();
+        lalakuLeaveWebsite();
       }else{
         // Pasang kembali satu guard agar Back berikutnya tetap terkontrol,
         // tanpa memunculkan dialog di subhalaman.
