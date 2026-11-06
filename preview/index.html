@@ -68,6 +68,24 @@
 @media(max-width:620px){.admin-fixture-row{grid-template-columns:minmax(0,1fr) minmax(125px,.9fr) minmax(0,1fr);gap:5px;padding:13px 4px}.admin-fixture-team{font-size:.84rem}.admin-fixture-score{gap:4px}.admin-fixture-score input{width:42px;padding:7px 3px}.admin-fixture-actions .btn{font-size:.7rem;padding:6px 7px}}
 .fixture-status.played{color:#9ee6b1;border-color:#287a4a}.dashboard-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.dashboard-stats .stat{padding:13px}.dashboard-stats .stat b{font-size:1.55rem}.result-list{margin-top:12px}.empty-state{padding:18px;border:1px dashed #526985;border-radius:12px;color:#b6c2d3;text-align:center;margin-top:12px}.profile-history{margin-top:16px}.profile-history .row-item{align-items:flex-start}.profile-score{color:#ffe49a;font-weight:900;white-space:nowrap}.profile-form-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:16px 0 4px;padding:13px 15px;border:1px solid #2d425c;border-radius:12px;background:#101f33}.profile-form-label{color:#c4d0df;font-weight:700}.profile-form-chips{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}.profile-form-chips .form-chip{width:29px;height:29px;font-size:.82rem}@media(max-width:520px){.profile-form-row{align-items:flex-start;flex-direction:column;gap:9px}.profile-form-chips{justify-content:flex-start}}
 @media(max-width:620px){.admin-login-grid{grid-template-columns:1fr}.admin-fixture-field{grid-column:auto}.dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Premium exit confirmation modal */
+.exit-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(1,6,14,.78);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.exit-modal.show{display:flex;animation:exitFade .2s ease-out}
+.exit-dialog{width:min(100%,430px);position:relative;overflow:hidden;padding:28px 24px 22px;border:1px solid rgba(241,200,91,.48);border-radius:25px;background:radial-gradient(circle at 50% -20%,rgba(241,200,91,.18),transparent 45%),linear-gradient(155deg,#14243a 0%,#091321 58%,#050b14 100%);box-shadow:0 24px 80px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.08);text-align:center;color:#f7f8fb}
+.exit-dialog:before{content:"";position:absolute;left:18%;right:18%;top:0;height:2px;background:linear-gradient(90deg,transparent,#ffe9a0,#c58d2d,transparent)}
+.exit-emblem{width:68px;height:68px;margin:0 auto 17px;border:1px solid rgba(241,200,91,.55);border-radius:21px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(241,200,91,.16),rgba(241,200,91,.035));color:#ffe39a;box-shadow:0 8px 28px rgba(241,200,91,.12)}
+.exit-emblem svg{width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.exit-kicker{margin:0 0 7px;color:#e4c777;font-size:.69rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.exit-title{margin:0;color:#fff;font-size:1.32rem;line-height:1.25;font-weight:850}
+.exit-copy{margin:12px auto 23px;max-width:320px;color:#b9c5d5;font-size:.92rem;line-height:1.6}
+.exit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exit-btn{min-height:47px;border-radius:13px;padding:10px 14px;font:700 .9rem system-ui;cursor:pointer;transition:transform .15s ease,filter .15s ease}
+.exit-btn:active{transform:scale(.97)}
+.exit-stay{border:1px solid #536984;background:#17283d;color:#f5f7fb}
+.exit-leave{border:1px solid #f1c85b;background:linear-gradient(135deg,#ffe7a0,#d5a63f);color:#201806;box-shadow:0 5px 18px rgba(213,166,63,.2)}
+@keyframes exitFade{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@media(max-width:380px){.exit-dialog{padding:24px 17px 18px}.exit-actions{grid-template-columns:1fr}.exit-title{font-size:1.2rem}}
 </style>
 </head>
 <body>
@@ -118,6 +136,16 @@
 </section>
 
 <footer>e_Football Lalaku League Season 2 · Firebase Testing · Admin & Pengunjung</footer>
+</div>
+
+<div class="exit-modal" id="exit-modal" aria-hidden="true">
+  <section class="exit-dialog" role="dialog" aria-modal="true" aria-labelledby="exit-title" aria-describedby="exit-copy">
+    <div class="exit-emblem" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 4H5.8A1.8 1.8 0 0 0 4 5.8v12.4A1.8 1.8 0 0 0 5.8 20H10"/><path d="M14 16l4-4-4-4M18 12H9"/></svg></div>
+    <p class="exit-kicker">LALAKU LEAGUE · SEASON 2</p>
+    <h2 class="exit-title" id="exit-title">Yakin ingin keluar?</h2>
+    <p class="exit-copy" id="exit-copy">Kamu akan meninggalkan website Lalaku League. Pastikan aktivitasmu sudah selesai.</p>
+    <div class="exit-actions"><button type="button" class="exit-btn exit-stay" id="exit-stay">Tetap di Sini</button><button type="button" class="exit-btn exit-leave" id="exit-leave">Ya, Keluar</button></div>
+  </section>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -235,6 +263,19 @@ history.pushState({
   app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,
   round:selectedRound,matchday:selectedMatchday,guard:true
 },'',location.href);
+
+function lalakuShowExitDialog(){
+  return new Promise(resolve=>{
+    const modal=document.getElementById('exit-modal');
+    const stay=document.getElementById('exit-stay');
+    const leave=document.getElementById('exit-leave');
+    if(!modal||!stay||!leave){resolve(false);return;}
+    const close=value=>{modal.classList.remove('show');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';stay.removeEventListener('click',onStay);leave.removeEventListener('click',onLeave);modal.removeEventListener('click',onBackdrop);document.removeEventListener('keydown',onKey);resolve(value);};
+    const onStay=()=>close(false),onLeave=()=>close(true),onBackdrop=e=>{if(e.target===modal)close(false);},onKey=e=>{if(e.key==='Escape')close(false);};
+    stay.addEventListener('click',onStay);leave.addEventListener('click',onLeave);modal.addEventListener('click',onBackdrop);document.addEventListener('keydown',onKey);
+    modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';stay.focus();
+  });
+}
 window.addEventListener('popstate',event=>{
   const state=event.state;
   if(!state||state.app!==LALAKU_HISTORY_KEY)return;
@@ -243,15 +284,10 @@ window.addEventListener('popstate',event=>{
     return;
   }
   if(state.root||state.page==='dashboard'){
-    const leave=window.confirm('Keluar dari website Lalaku League Season 2?');
-    if(leave){
-      history.back();
-    }else{
-      history.pushState({
-        app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,
-        round:selectedRound,matchday:selectedMatchday,guard:true
-      },'',location.href);
-    }
+    lalakuShowExitDialog().then(leave=>{
+      if(leave){history.back();}
+      else{history.pushState({app:LALAKU_HISTORY_KEY,page:'dashboard',profile:null,scrollY:0,round:selectedRound,matchday:selectedMatchday,guard:true},'',location.href);}
+    });
     return;
   }
   lalakuRestoreState(state);
